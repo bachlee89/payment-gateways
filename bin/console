@@ -18,6 +18,7 @@ function main {
  	    "start") start $2;;
  	    "stop") stop $2;;
 		"setup") setup;;
+	    "status") status;;
     	*) echo "${BG_ERROR}Invalid command!${RESET}" ;;
  	esac
 }
@@ -34,7 +35,7 @@ function start {
     name=$1
     if [ -z "$name" ]
     then
-        setup && sudo service payment-gateways-crawler start
+        setup && python3.6 $BASE_DIR"/src/main.py"
     else
         python3.6 $BASE_DIR"/src/services.py" payment $name 1
     fi
@@ -51,5 +52,9 @@ function stop {
 
 }
 
+function status {
+    python3.6 $BASE_DIR"/src/services.py" status
+    sudo service payment-gateways-crawler status
+}
 
 main $1 $2 $3 $4
