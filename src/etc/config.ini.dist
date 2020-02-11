@@ -1,0 +1,12 @@
+[Mysql]
+host : localhost
+usename : root
+password : root123
+dbname : payment_getways
+[Vietcombank]
+username : 1493817A08
+password : H0ang@123
+home_url : https://www.vietcombank.com.vn
+login_url : https://www.vietcombank.com.vn/IBanking2015
+dashboard_url : https://www.vietcombank.com.vn/IBanking2015
+debug_mode : false

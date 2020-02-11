@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# Author: bach
+# Skype: bachlee89
+# Created: 5/2019
+# Last updated: 7/5/2019
+
+# Background
+BG_ERROR=`tput setab 1`; # ${BG_ERROR}
+BG_SUCCESS=`tput setab 2`; # ${BG_SUCCESS}
+BG_WARN=`tput setab 4`; # ${BG_WARN}
+BG_H1=`tput setab 6`; # ${BG_H1}
+RESET=`tput sgr0`; # ${RESET}
+BASE_DIR="/var/www/payment-gateways"
+function main {
+	cmd=$1
+ 	case $cmd in
+ 	    "start") start $2;;
+ 	    "stop") stop $2;;
+		"setup") setup;;
+    	*) echo "${BG_ERROR}Invalid command!${RESET}" ;;
+ 	esac
+}
+
+function setup {
+    python3.6 $BASE_DIR"/src/services.py" setup
+}
+
+function remove {
+    python3.6 $BASE_DIR"/src/services.py" remove
+}
+
+function start {
+    name=$1
+    if [ -z "$name" ]
+    then
+        setup && sudo service payment-gateways-crawler start
+    else
+        python3.6 $BASE_DIR"/src/services.py" payment $name 1
+    fi
+}
+
+function stop {
+    name=$1
+    if [ -z "$name" ]
+    then
+       remove && sudo service payment-gateways-crawler stop
+    else
+       python3.6 $BASE_DIR"/src/services.py" payment $name 0
+    fi
+
+}
+
+
+main $1 $2 $3 $4

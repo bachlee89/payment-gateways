@@ -1,0 +1,61 @@
+#!/usr/bin/env python3
+
+from connector.http.vietcombank import Vietcombank
+from connector.http.vietcombank_enterprise import VietcombankEnterprise
+from model.config import Config
+from model.log import Log
+from model.thread.connector import ThreadConnector
+from model.proxy import Proxy
+import sys
+import time
+
+
+def run():
+    config = Config()
+    systemLog = Log()
+    sections = config.get_sections()
+    threads = []
+    proxies = {}
+    while 1:
+        for section in sections:
+            if section.startswith('Vietcombank'):
+                vietcombankConfig = config.get_section_config(section)
+                type = vietcombankConfig['type']
+                if type == 'personal':
+                    for x in range(0, 2):
+                        thread_name = "Thread-Vietcombank-Enterprise"
+                        if len(proxies[thread_name]) == 0:
+                            proxies[thread_name] = {}
+                        proxies[thread_name]['count'] = 0
+                        if proxies[thread_name] % 10 == 0:
+                            if proxies[thread_name]['count'] > 100:
+                                proxies[thread_name]['count'] = 0
+                            proxies[thread_name]['proxy'] = Proxy().random_proxy()
+                        proxies[thread_name]['count'] = proxies[thread_name]['count'] + 1
+                        vietcombank = Vietcombank(section, proxies[thread_name]['proxy'])
+                        thread = ThreadConnector(thread_name, vietcombank, 5)
+                        thread.start()
+                        threads.append(thread)
+                elif type == 'enterprise':
+                    for x in range(0, 4):
+                        thread_name = "Thread-Vietcombank-Enterprise-" + str(x)
+                        if thread_name not in proxies:
+                            proxies[thread_name] = {}
+                            proxies[thread_name]['count'] = 0
+                        if proxies[thread_name]['count'] % 10 == 0:
+                            if proxies[thread_name]['count'] > 100:
+                                proxies[thread_name]['count'] = 0
+                            proxies[thread_name]['proxy'] = Proxy().random_proxy()
+                        proxies[thread_name]['count'] = proxies[thread_name]['count'] + 1
+                        vietcombank = VietcombankEnterprise(section, proxies[thread_name]['proxy'])
+                        thread = ThreadConnector(thread_name, vietcombank, 5)
+                        thread.start()
+                        threads.append(thread)
+                else:
+                    systemLog.log("Type " + type + " is not supported", 'error')
+        for t in threads:
+            t.join()
+
+
+if __name__ == '__main__':
+    run()

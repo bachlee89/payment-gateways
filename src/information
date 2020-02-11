@@ -1,0 +1,36 @@
+source venv bin/active
+
+mysql -ubank -p -hmysqlinstance.cxjzuz
+
+
+kbcj36.ap-southeast-1.rds.amazonaws.com
+
+
+[Unit]
+Description=Payment Gateways Service
+
+[Service]
+WorkingDirectory=/var/www/payment-gateways
+User=ubuntu
+ExecStart=/usr/bin/python3 /var/www/payment-gateways/src/main.py
+Restart=always
+RestartSec=10
+[Install]
+WantedBy=multi-user.target
+
+
+sudo apt-get install python3-opencv python3-pymysql python3-lxml
+
+
+sudo service payment-gateways-api start
+
+sudo service payment-gateways-api stop
+
+sudo service payment-gateways-crawler start
+
+sudo service payment-gateways-crawler stop
+
+ssh bach@183.91.11.172
+P@ss4BACH
+
+sudo ln -s apt_pkg.cpython-36m-x86_64-linux-gnu.so pt_pkg.so
