@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="82e68ea3-69c9-41f1-bfed-0bd0fc7ec94e" name="Default" comment="Fix docker-compose">
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -197,8 +198,8 @@
       <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="72" column="5" selection-start-line="72" selection-start-column="5" selection-end-line="72" selection-end-column="5" />
+            <state relative-caret-position="228">
+              <caret line="73" column="5" selection-start-line="73" selection-start-column="5" selection-end-line="73" selection-end-column="5" />
             </state>
           </provider>
         </entry>
@@ -1101,8 +1102,8 @@
       <window_info anchor="bottom" id="Version Control" order="10" sideWeight="0.49848485" weight="0.32765958" />
       <window_info anchor="bottom" id="Python Console" order="14" weight="0.32786885" />
       <window_info anchor="bottom" id="Run" order="3" sideWeight="0.49923077" weight="0.32113144" />
-      <window_info anchor="bottom" id="Terminal" order="13" sideWeight="0.49306297" visible="true" weight="0.4326123" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.4181818" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="13" sideWeight="0.49306297" visible="true" weight="0.4326123" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.4181818" />
       <window_info anchor="bottom" id="Docker" order="8" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="3" weight="0.32954547" />
       <window_info anchor="right" id="SciView" order="4" weight="0.32954547" />
@@ -1620,8 +1621,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="72" column="5" selection-start-line="72" selection-start-column="5" selection-end-line="72" selection-end-column="5" />
+        <state relative-caret-position="228">
+          <caret line="73" column="5" selection-start-line="73" selection-start-column="5" selection-end-line="73" selection-end-column="5" />
         </state>
       </provider>
     </entry>

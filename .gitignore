@@ -71,3 +71,4 @@ src/tmp
 src/etc/config.ini
 env/
 venv/
+.idea
