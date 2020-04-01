@@ -192,8 +192,9 @@ class Msb:
                     'fromDate': current_date,
                     'toDate': time.strftime("%Y-%m-%d")
                 }
+                print(account_info_url)
+                print(payload)
                 account_post = session_requests.post(account_info_url, payload)
-                print(str(account_post))
                 response = account_post.json()
                 if response['status'] == '200':
                     histories = response['data']['history']
