@@ -80,6 +80,7 @@ def run():
                     msb = Msb(section, msb_session, {})
                     thread = ThreadConnector("Thread-Msb-personal", msb, 5)
                     thread.start()
+                    threads.append(thread)
 
             if section.startswith('Techcombank'):
                 if payment.check_status(section_config['username']) == 0:
