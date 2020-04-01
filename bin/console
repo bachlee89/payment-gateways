@@ -24,20 +24,20 @@ function main {
 }
 
 function setup {
-    python3.6 $BASE_DIR"/src/services.py" setup
+    python3 $BASE_DIR"/src/services.py" setup
 }
 
 function remove {
-    python3.6 $BASE_DIR"/src/services.py" remove
+    python3 $BASE_DIR"/src/services.py" remove
 }
 
 function start {
     name=$1
     if [ -z "$name" ]
     then
-        setup && python3.6 $BASE_DIR"/src/main.py"
+        setup && python3 $BASE_DIR"/src/main.py"
     else
-        python3.6 $BASE_DIR"/src/services.py" payment $name 1
+        python3 $BASE_DIR"/src/services.py" payment $name 1
     fi
 }
 
@@ -47,13 +47,13 @@ function stop {
     then
        remove && sudo service payment-gateways-crawler stop
     else
-       python3.6 $BASE_DIR"/src/services.py" payment $name 0
+       python3 $BASE_DIR"/src/services.py" payment $name 0
     fi
 
 }
 
 function status {
-    python3.6 $BASE_DIR"/src/services.py" status
+    python3 $BASE_DIR"/src/services.py" status
     sudo service payment-gateways-crawler status
 }
 
