@@ -189,7 +189,7 @@ class Msb:
                     'page': 1,
                     'tokenNo': token,
                     'lang': "vi_VN",
-                    'fromDate': current_date,
+                    'fromDate': current_date.rstrip('\r\n'),
                     'toDate': time.strftime("%Y-%m-%d")
                 }
                 print(account_info_url)
