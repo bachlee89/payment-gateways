@@ -90,21 +90,21 @@ class Techcombank:
                         account_link.click()
                         # Click to view last 10 transactions
                         time.sleep(5)
-                        current_date = self.history.get_current_update('techcombank')
-                        from_date = driver.find_elements_by_xpath(
-                            "//input[@id='fieldName:START.DATE']")[0]
-                        from_date.send_keys(current_date, Keys.ENTER)
-                        time.sleep(5)
-                        to_date = driver.find_elements_by_xpath(
-                            "//input[@id='fieldName:END.DATE']")[0]
-                        to_date.send_keys(current_date)
-                        time.sleep(5)
+                        # current_date = self.history.get_current_update('techcombank')
+                        # from_date = driver.find_elements_by_xpath(
+                        #     "//input[@id='fieldName:START.DATE']")[0]
+                        # from_date.send_keys(current_date, Keys.ENTER)
+                        # time.sleep(5)
+                        # to_date = driver.find_elements_by_xpath(
+                        #     "//input[@id='fieldName:END.DATE']")[0]
+                        # to_date.send_keys(current_date)
+                        # time.sleep(5)
+                        # button = driver.find_elements_by_xpath(
+                        #     '//a[@title="Xem giao dịch"]')[1]
+                        # button.click()
+                        # time.sleep(5)
                         button = driver.find_elements_by_xpath(
-                            '//a[@title="Xem giao dịch"]')[1]
-                        button.click()
-                        time.sleep(5)
-                        button = driver.find_elements_by_xpath(
-                            '//a[@title="Xem giao dịch"]')[1]
+                            '//a[@title="Xem giao dịch"]')[0]
                         button.click()
                         break
                     except:
