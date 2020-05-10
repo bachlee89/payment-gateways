@@ -51,7 +51,7 @@ class Techcombank:
                 self.session.set_last_driver('Firefox')
             else:
                 driver = selenium.get_chrome_driver(self.proxy)
-                self.session.set_last_driver('Chrome')
+                self.session.set_last_driver('Firefox')
 
             self.session.set_driver(driver)
 
