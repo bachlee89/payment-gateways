@@ -15,7 +15,7 @@ class ThreadConnector(threading.Thread):
 
     def run(self):
         connector = self.connector
-        print(self.get_current_time() + "Starting " + self.name)
+        print(self.get_current_time() + "STARTING: " + self.name)
         spinner = Spinner()
         spinner.start()
         # Get lock to synchronize threads
@@ -29,12 +29,12 @@ class ThreadConnector(threading.Thread):
                 print(str(sys.exc_info()))
             threadLock.release()
             spinner.stop()
-            print(self.get_current_time() + "Ending " + self.name)
+            print(self.get_current_time() + "ENDING: " + self.name)
             raise
         # Free lock to release next thread
         threadLock.release()
         spinner.stop()
-        print(self.get_current_time() + "Ending " + self.name)
+        print(self.get_current_time() + "ENDING: " + self.name)
         time.sleep(self.delay)
 
     def get_current_time(self):

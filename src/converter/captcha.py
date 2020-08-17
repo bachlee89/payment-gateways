@@ -80,11 +80,18 @@ class CaptchaResolver:
         # print('Captcha: ' + captcha_str)
         return captcha_str
 
-    def save_from_source(self, source):
-        tmp_file = self.config.get_base_dir('tmp') + self.get_tmp_file_name('captcha.jpeg')
+    def save_from_source(self, source, suffix='jpeg'):
+        tmp_file = self.config.get_base_dir('tmp') + self.get_tmp_file_name('captcha.' + suffix)
         with open(tmp_file, 'wb') as handler:
             handler.write(source)
         self.set_path(tmp_file)
+        if suffix is not 'jpeg':
+            image = Image.open(tmp_file)
+            rgb_im = image.convert('RGB')
+            new_file = self.config.get_base_dir('tmp') + self.get_tmp_file_name('captcha.jpeg')
+            rgb_im.save(new_file, "jpeg")
+            self.set_path(new_file)
+            os.remove(tmp_file)
 
     def get_tmp_file_name(self, filename):
         return "%s_%s" % (md5(str(time.time()).encode('utf-8')).hexdigest(), filename)

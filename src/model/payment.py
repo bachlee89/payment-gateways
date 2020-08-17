@@ -18,6 +18,24 @@ class Payment:
     def get_username(self):
         return self.username
 
+    def set_password(self, password):
+        self.password = password
+
+    def get_password(self):
+        return self.password
+
+    def set_type(self, type):
+        self.type = type
+
+    def get_type(self):
+        return self.type
+
+    def set_id(self, id):
+        self.id = id
+
+    def get_id(self):
+        return self.id
+
     def set_status(self, status):
         self.status = status
 
@@ -37,6 +55,21 @@ class Payment:
         sql = "SELECT `status` FROM `payment` where `username`=%s"
         payment = connection.select(sql, username)
         return payment[0]
+
+    def get_payments(self):
+        connection = self.connection
+        sql = "SELECT * FROM `payment`"
+        payments = connection.query(sql).fetchall()
+        return payments
+
+    def set_payment(self, payment):
+        self.set_id(payment[0])
+        self.set_name(payment[1])
+        self.set_username(payment[2])
+        self.set_password(payment[3])
+        self.set_type(payment[4])
+        self.set_status(payment[5])
+        return self
 
     def update_status(self):
         connection = self.connection

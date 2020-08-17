@@ -25,16 +25,16 @@ from model.history import History
 
 
 class Techcombank:
-    def __init__(self, name=None, session=None, proxy={}):
+    def __init__(self, payment, session=None, proxy={}):
         self.session = session
         self.proxy = proxy
         self.config = Config()
         self.log = Log()
-        techcombank = self.get_techcombank_config(name)
+        techcombank = self.get_techcombank_config()
         self.email_transport = EmailTransport()
         self.login_url = techcombank['login_url']
-        self.username = techcombank['username']
-        self.password = techcombank['password']
+        self.username = payment.get_username()
+        self.password = payment.get_password()
         self.debug_mode = techcombank['debug_mode']
         self.total_transactions = 0
         self.history = History()
@@ -168,10 +168,9 @@ class Techcombank:
         account.update_account()
         return account
 
-    def get_techcombank_config(self, name=None):
-        if name is None:
-            name = 'Vietcombank'
-        techcombank = self.config.get_section_config(name)
+    def get_techcombank_config(self):
+
+        techcombank = self.config.get_section_config('Techcombank')
         return techcombank
 
     def is_debug(self):

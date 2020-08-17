@@ -18,7 +18,7 @@ class EmailTransport:
 
     def send_transaction_email(self, account, transaction):
         message = MIMEMultipart()
-        message["Subject"] = "[FinanceX Payment] You have a new transaction"
+        message["Subject"] = "[FinanceX Payment] You have a new transaction " + transaction.get_reference_number()
         message["From"] = self.sender_pass
         message["To"] = self.sale_emails.split(',')[0]
         if account.get_vendor() in ['Vietcombank', 'Maritimebank']:

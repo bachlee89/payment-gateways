@@ -125,6 +125,8 @@ class Msb:
                 '_password': password,
                 '_verifyCode': captcha_text
             }
+            print(captcha_text)
+            exit(1)
             # Perform login
             login_post = session_requests.post(login_url + '/Request', payload)
             tree = html.fromstring(login_post.text)
