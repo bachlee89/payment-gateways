@@ -20,7 +20,7 @@ class Selenium:
         profile.set_preference("general.useragent.override", self.ua.random)
 
         opts = Options()
-        opts.set_headless()
+        # opts.set_headless()
         driver = Firefox(options=opts, firefox_profile=profile)
         return driver
 
@@ -29,6 +29,6 @@ class Selenium:
         options.add_argument(f'user-agent={self.ua.random}')
         # if len(proxy):
         #     options.add_argument("--proxy-server=http://" + proxy['ip'] + ":" + proxy['port'])
-        options.set_headless()
+        # options.set_headless()
         driver = Chrome(chrome_options=options)
         return driver

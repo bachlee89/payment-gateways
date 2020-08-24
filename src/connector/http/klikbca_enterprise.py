@@ -14,29 +14,27 @@ from helper.file import File
 
 
 class KlikbcaEnterprise:
-    def __init__(self, name=None, session=None, proxy={}):
-        self.name = name
+    def __init__(self, payment, session=None, proxy={}):
+        self.payment = payment
         self.session = session
         self.proxy = proxy
         self.config = Config()
         self.log = Log()
         self.code = GenerateCode()
         self.email_transport = EmailTransport()
-        section_config = self.get_section_config(name)
+        section_config = self.get_section_config()
         self.dashboard_url = section_config['dashboard_url']
         self.balance_url = section_config['balance_url']
         self.account_info_url = section_config['account_info_url']
         self.account_statement_url = section_config['account_statement_url']
-        self.username = section_config['username']
-        self.password = section_config['password']
+        self.username = payment.get_username()
+        self.password = payment.get_password()
         self.debug_mode = section_config['debug_mode']
         self.total_transactions = 0
         self.file = File()
 
-    def get_section_config(self, name=None):
-        if name is None:
-            name = 'Klikbca'
-        section_config = self.config.get_section_config(name)
+    def get_section_config(self):
+        section_config = self.config.get_section_config('KlikbcaEnterprise')
         return section_config
 
     def is_logged(self):
@@ -131,7 +129,7 @@ class KlikbcaEnterprise:
         if len(account_name_row) > 0:
             account_name = account_name_row[2]
 
-        account = KlikbcaAccount(account_name, account_number)
+        account = KlikbcaAccount(account_name, account_number, self.payment.get_id())
         if account_number is not None and 'Period' not in account_number and 'Currency' not in account_name:
             balance_get = session_requests.post(balance_url, dict(referer=self.account_info_url))
             acc_tree = html.fromstring(balance_get.content)

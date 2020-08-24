@@ -16,13 +16,13 @@ import sys
 
 
 def run():
-    payment = Payment()
     systemLog = Log()
+    payment = Payment()
     threads = []
     sessions = {}
     proxy = Proxy().random_proxy()
-    payments = payment.get_payments()
     while 1:
+        payments = payment.get_payments()
         for p in payments:
             payment = payment.set_payment(p)
             name = payment.get_name()
@@ -32,6 +32,7 @@ def run():
             connector_module = 'connector.http.' + name.lower()
             if type == 'enterprise':
                 connector_module += '_enterprise'
+                name += 'Enterprise'
             module = importlib.import_module(connector_module)
             class_ = getattr(module, name)
             sessions[name] = Session(proxy)

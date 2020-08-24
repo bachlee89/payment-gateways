@@ -67,7 +67,7 @@ config.js
 #config
 
 src/var
-src/tmp
+#src/tmp
 src/etc/config.ini
 env/
 venv/

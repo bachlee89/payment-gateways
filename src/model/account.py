@@ -2,12 +2,13 @@ from db.connection import Connection
 
 
 class Account:
-    def __init__(self, name, number, vendor, balance=None):
+    def __init__(self, name, number, vendor, payment_id, balance=None):
         self.name = name
         self.number = number
         self.vendor = vendor
         self.connection = Connection()
         self.balance = balance
+        self.payment_id = payment_id
 
     def set_name(self, name):
         self.name = name
@@ -27,6 +28,12 @@ class Account:
     def get_vendor(self):
         return self.vendor
 
+    def set_payment_id(self, payment_id):
+        self.payment_id = payment_id
+
+    def get_payment_id(self):
+        return self.payment_id
+
     def set_balance(self, balance):
         self.balance = balance
 
@@ -39,8 +46,8 @@ class Account:
         account = connection.select(sql, (self.get_number()))
         if not account:
             # Create new account
-            sql = "INSERT INTO `account` (`number`, `name`,`vendor`) VALUES (%s, %s, %s)"
-            connection.query(sql, (self.get_number(), self.get_name(), self.get_vendor()))
+            sql = "INSERT INTO `account` (`number`, `name`,`vendor`, `payment_id`) VALUES (%s, %s, %s,%s)"
+            connection.query(sql, (self.get_number(), self.get_name(), self.get_vendor(), self.get_payment_id()))
 
     def update_account(self):
         if self.get_account_id() is not None and self.get_balance() is not None:

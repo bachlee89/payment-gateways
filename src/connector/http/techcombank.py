@@ -28,6 +28,7 @@ class Techcombank:
     def __init__(self, payment, session=None, proxy={}):
         self.session = session
         self.proxy = proxy
+        self.payment = payment
         self.config = Config()
         self.log = Log()
         techcombank = self.get_techcombank_config()
@@ -48,7 +49,7 @@ class Techcombank:
         if self.session.get_driver() is None:
             if self.session.get_last_driver() is None or self.session.get_last_driver() is 'Chrome':
                 driver = selenium.get_firefox_driver(self.proxy)
-                self.session.set_last_driver('Firefox')
+                self.session.set_last_driver('Chrome')
             else:
                 driver = selenium.get_firefox_driver(self.proxy)
                 self.session.set_last_driver('Firefox')
@@ -123,7 +124,7 @@ class Techcombank:
                     number = info[0].find_elements_by_xpath("td")[1].text
                     balance = float(info[0].find_elements_by_xpath("td")[3].text.replace(',', ''))
                     name = info[1].find_elements_by_xpath("td")[1].text
-                    account = self.update_account(name, number, balance)
+                    account = self.update_account(name, number, balance, self.payment.get_id())
                     transactions = driver.find_elements_by_xpath(
                         "//table[starts-with(@id,'datadisplay_MainBody')]//tr")
                     for row in transactions:
@@ -162,8 +163,8 @@ class Techcombank:
         date = datetime.strptime(trading_date, '%d/%m/%Y')
         return date.strftime('%Y-%m-%d')
 
-    def update_account(self, name, number, balance):
-        account = TechcombankAccount(name, number)
+    def update_account(self, name, number, balance, payment_id):
+        account = TechcombankAccount(name, number, payment_id)
         account.set_balance(balance)
         account.update_account()
         return account

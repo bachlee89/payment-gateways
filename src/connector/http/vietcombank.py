@@ -46,6 +46,7 @@ class Vietcombank:
         self.login_failed = 0
         self.session = session
         self.proxy = proxy
+        self.payment = payment
 
     def get_vietcombank_config(self):
         vietcombank = self.config.get_section_config('Vietcombank')
@@ -59,7 +60,7 @@ class Vietcombank:
         if self.session.get_driver() is None:
             if self.session.get_last_driver() is None or self.session.get_last_driver() is 'Chrome':
                 driver = selenium.get_firefox_driver(self.proxy)
-                self.session.set_last_driver('Firefox')
+                self.session.set_last_driver('Chrome')
             else:
                 driver = selenium.get_firefox_driver(self.proxy)
                 self.session.set_last_driver('Firefox')
@@ -113,17 +114,17 @@ class Vietcombank:
                             driver.close()
                             self.history.set_current_update('vietcombank', "%d/%m/%Y")
                             self.session.set_driver(None)
-                driver.execute_script("window.scrollTo(0, 800);")
-                time.sleep(5)
-                search_button = WebDriverWait(driver, 10).until(
-                    EC.element_to_be_clickable(
-                        (By.XPATH,
-                         "//a[contains(@class,'ubtn ubg-primary ubtn-md ripple')]/span[contains(text(),'Tìm kiếm')]"))
-                )
-                search_button.click()
 
                 # Update account information
                 try:
+                    driver.execute_script("window.scrollTo(0, 800);")
+                    time.sleep(5)
+                    search_button = WebDriverWait(driver, 10).until(
+                        EC.element_to_be_clickable(
+                            (By.XPATH,
+                             "//a[contains(@class,'ubtn ubg-primary ubtn-md ripple')]/span[contains(text(),'Tìm kiếm')]"))
+                    )
+                    search_button.click()
                     WebDriverWait(driver, 15).until(
                         EC.visibility_of_element_located(
                             (By.XPATH, "//form[@id='ChiTietTaiKhoan']"))
@@ -136,13 +137,13 @@ class Vietcombank:
                     balance = float(info.find_elements_by_xpath(
                         "//div[contains(@class,'list-info-txt-main')]")[2].text.replace(
                         ',', '').replace(' VND', ''))
-                    account = self.update_account(name, number, balance)
+                    account = self.update_account(name, number, balance, self.payment.get_id())
                     transactions = driver.find_elements_by_xpath(
                         "//div[@id='toanbo']//div[contains(@class,'list-info-item')]")
                     for row in transactions:
-                        columns = row.find_elements_by_xpath("//div[contains(@class,'td-xs')]")
+                        columns = row.find_elements_by_xpath(".//div[contains(@class,'td-xs')]")
                         self.save_transaction(account, columns)
-                    self.log.update_log('Techcombank', self.username)
+                    self.log.update_log('Vietcombank', self.username)
                     self.log.log(str(self.total_transactions) + ' Vcb transaction(s) created', 'message')
                     self.session.set_changing_proxy(0)
                 except:
@@ -171,6 +172,7 @@ class Vietcombank:
             detail[1].find_element_by_xpath("div[contains(@class,'list-info-txt-main')]").text.replace(',', '').replace(
                 ' ', ''))
         transaction = Transaction(account_id, reference_number, trading_date, balance, description)
+        print(reference_number)
         if transaction.save() == 1:
             self.total_transactions = self.total_transactions + 1
             self.email_transport.send_transaction_email(account, transaction)
@@ -197,8 +199,8 @@ class Vietcombank:
         date = datetime.strptime(trading_date, '%d/%m/%Y')
         return date.strftime('%Y-%m-%d')
 
-    def update_account(self, name, number, balance):
-        account = VietcombankAccount(name, number)
+    def update_account(self, name, number, balance, payment_id):
+        account = VietcombankAccount(name, number, payment_id)
         account.set_balance(balance)
         account.update_account()
         return account
@@ -206,8 +208,8 @@ class Vietcombank:
     def get_config(self, name=None):
         if name is None:
             name = 'Vietcombank'
-        techcombank = self.config.get_section_config(name)
-        return techcombank
+        vietcombank = self.config.get_section_config(name)
+        return vietcombank
 
     def is_debug(self):
         return self.debug_mode
