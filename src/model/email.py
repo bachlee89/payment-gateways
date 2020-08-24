@@ -1,9 +1,8 @@
-import smtplib, ssl
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from babel.numbers import format_currency
 from .time import Time
 from .config import Config
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
 
 class EmailTransport:
@@ -12,16 +11,15 @@ class EmailTransport:
         self.config = Config()
         self.email_config = self.config.get_section_config('Email')
         self.sender_email = self.email_config['sender_email']
-        self.sender_pass = self.email_config['sender_pass']
+        self.api_key = self.email_config['api_key']
         self.sale_emails = self.email_config['sale_emails']
         self.system_emails = self.email_config['system_emails']
 
     def send_transaction_email(self, account, transaction):
-        message = MIMEMultipart()
-        message["Subject"] = "[FinanceX Payment] You have a new transaction " + transaction.get_reference_number()
-        message["From"] = self.sender_pass
-        message["To"] = self.sale_emails.split(',')[0]
-        if account.get_vendor() in ['Vietcombank', 'Maritimebank']:
+        subject = "[FinanceX Payment] You have a new transaction " + transaction.get_reference_number()
+        sender = self.sender_email
+        receiver = self.sale_emails
+        if account.get_vendor() in ['Vietcombank', 'Maritimebank', 'Techcombank', 'Msb']:
             balance = format_currency(float(transaction.get_balance()), 'VND', locale='vi_VN')
         elif account.get_vendor() in ['Klikbca']:
             balance = format_currency(float(transaction.get_balance()), 'IDR', locale='vi_VN')
@@ -47,15 +45,18 @@ class EmailTransport:
         </html>
         """.format(account.get_number(), account.get_name(), account.get_vendor(), balance, description, status,
                    trading_date)
-        message.attach(MIMEText(text, "html"))
-        self.send(self.sale_emails, message)
+        message = Mail(
+            from_email=sender,
+            to_emails=receiver,
+            subject=subject,
+            html_content=text)
+        self.send(message)
         # Create secure connection with server and send email
 
     def send_notify(self, vendor, username):
-        message = MIMEMultipart()
-        message["Subject"] = "[FinanceX Payment] System Failure"
-        message["From"] = self.sender_pass
-        message["To"] = self.system_emails.split(',')[0]
+        subject = "[FinanceX Payment] System Failure at" + self.time.get_current_time()
+        sender = self.sender_email
+        receiver = self.system_emails
         text = """\
         <html>
             <body>
@@ -64,15 +65,14 @@ class EmailTransport:
             </body>
         </html>
         """.format(vendor, username)
-        message.attach(MIMEText(text, "html"))
-        self.send(self.system_emails, message)
 
-    def send(self, receiver_emails, message):
-        sender_email = self.sender_email
-        password = self.sender_pass
-        context = ssl.create_default_context()
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
-            server.login(sender_email, password)
-            server.sendmail(
-                sender_email, receiver_emails.split(','), message.as_string()
-            )
+        message = Mail(
+            from_email=sender,
+            to_emails=receiver,
+            subject=subject,
+            html_content=text)
+        self.send(message)
+
+    def send(self, message):
+        sg = SendGridAPIClient(self.api_key)
+        sg.send(message)
