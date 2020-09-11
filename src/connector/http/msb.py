@@ -20,7 +20,7 @@ class Msb:
     def __init__(self, payment, session=None, proxy={}):
         self.payment = payment
         self.session = session
-        self.proxy = proxy
+        self.proxy = {}
         self.captcha = CaptchaResolver()
         self.config = Config()
         self.log = Log()
