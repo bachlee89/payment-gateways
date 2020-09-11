@@ -123,10 +123,13 @@ class TechcombankEnterprise:
                         columns = row.find_elements_by_xpath("td")
                         self.save_transaction(account, columns)
                     self.log.update_log('Techcombank', self.username)
-                    self.log.log(str(self.total_transactions) + ' Tcb transaction(s) created', 'message')
+                    self.log.log("Tcb " + self.payment.get_type() + self.payment.get_username() + ": " + str(
+                        self.total_transactions) + ' transaction(s) created', 'message')
                     self.session.set_changing_proxy(0)
                 except:
-                    self.log.log("Techcombank: Cannot load transactions", 'error')
+                    self.log.log(
+                        "Tcb " + self.payment.get_type() + self.payment.get_username() + ": " + "Cannot load transactions",
+                        'error')
                     self.log.log(str(sys.exc_info()), 'error')
                     self.session.set_changing_proxy(1)
 

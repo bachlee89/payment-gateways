@@ -144,10 +144,13 @@ class Vietcombank:
                         columns = row.find_elements_by_xpath(".//div[contains(@class,'td-xs')]")
                         self.save_transaction(account, columns)
                     self.log.update_log('Vietcombank', self.username)
-                    self.log.log(str(self.total_transactions) + ' Vcb transaction(s) created', 'message')
+                    self.log.log("Vcb " + self.payment.get_type() + self.payment.get_username() + ": " + str(
+                        self.total_transactions) + ' transaction(s) created', 'message')
                     self.session.set_changing_proxy(0)
                 except:
-                    self.log.log("Vietcombank: Cannot load transactions", 'error')
+                    self.log.log(
+                        "Vcb " + self.payment.get_type() + self.payment.get_username() + ": " + "Cannot load transactions",
+                        'error')
                     self.log.log(str(sys.exc_info()), 'error')
                     self.session.set_changing_proxy(1)
 
