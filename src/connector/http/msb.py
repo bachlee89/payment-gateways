@@ -143,14 +143,15 @@ class Msb:
                 if self.login_failed >= self.max_attempt_login:
                     if self.debug_mode == 'true':
                         self.log.log(
-                            "Can not login Msb with " + str(self.max_attempt_login) + " attempts",
+                            "Can not login Msb:" + self.payment.get_username + " with " + str(
+                                self.max_attempt_login) + " attempts",
                             'error')
                     return 0
                 return self.perform_login()
         else:
             session_requests.set_changing_proxy(0)
             if self.debug_mode == 'true':
-                self.log.log('Login Msb successfully by using old session', 'debug')
+                self.log.log("Login Msb:" + self.payment.get_username + " successfully by using old session", 'debug')
         token = session_requests.get_token()
         if token is None:
             return 0
@@ -198,7 +199,8 @@ class Msb:
                         self.save_transaction(msb_account, history)
         self.log.update_log('Maritimebank', self.username)
         self.history.set_current_update('maritimebank', "%Y-%m-%d")
-        self.log.log(str(self.total_transactions) + ' Msb transaction(s) created', 'message')
+        self.log.log("Msb " + self.payment.get_type() + self.payment.get_username() + ": " + str(
+            self.total_transactions) + ' transaction(s) created', 'message')
 
     def save_transaction(self, account, history):
         trading_date = self.convert_trading_date(history['transferDate'])
