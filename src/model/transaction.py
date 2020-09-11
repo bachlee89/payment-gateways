@@ -1,5 +1,6 @@
 from db.connection import Connection
 from .time import Time
+from .user import User
 
 
 class Transaction:
@@ -11,6 +12,7 @@ class Transaction:
         self.description = description
         self.created_at = created_at
         self.connection = Connection()
+        self.user = User()
         self.time = Time()
 
     def set_account_id(self, account_id):
@@ -53,11 +55,17 @@ class Transaction:
         sql = "SELECT * FROM `transaction` where `reference_number`=%s and `account_id`=%s"
         transaction = connection.select(sql, (self.get_reference_number(), self.get_account_id()))
         if not transaction:
+            codes = self.user.get_codes()
+            user_code = None
+            for code in codes:
+                if code[0] in self.get_description():
+                    user_code = str(code[0])
+                    break
             # Create new transaction
-            sql = "INSERT INTO `transaction` (`account_id`, `reference_number`, `trading_date`, `balance`, `description`,`created_at`) VALUES (%s, %s, %s, %s, %s,%s)"
+            sql = "INSERT INTO `transaction` (`account_id`, `reference_number`, `trading_date`, `balance`, `description`,`code`,`created_at`) VALUES (%s, %s, %s, %s, %s,%s,%s)"
             connection.query(sql, (
                 self.get_account_id(), self.get_reference_number(), self.get_trading_date(), self.get_balance(),
-                self.get_description(), self.get_current_time()))
+                self.get_description(), user_code, self.get_current_time()))
             return 1
         return 0
 

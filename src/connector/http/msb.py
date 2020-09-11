@@ -17,7 +17,8 @@ from helper.file import File
 
 
 class Msb:
-    def __init__(self, name=None, session=None, proxy={}):
+    def __init__(self, payment, session=None, proxy={}):
+        self.payment = payment
         self.session = session
         self.proxy = proxy
         self.captcha = CaptchaResolver()
@@ -26,10 +27,9 @@ class Msb:
         self.history = History()
         self.code = GenerateCode()
         self.email_transport = EmailTransport()
-        self.name = name
-        section_config = self.get_section_config(name)
-        self.username = section_config['username']
-        self.password = section_config['password']
+        section_config = self.get_msb_config()
+        self.username = payment.get_username()
+        self.password = payment.get_password()
         self.home_url = section_config['home_url']
         self.login_url = section_config['login_url']
         self.account_list_url = section_config['account_list_url']
@@ -41,11 +41,9 @@ class Msb:
         self.login_failed = 0
         self.captcha_failed = 0
 
-    def get_section_config(self, name=None):
-        if name is None:
-            name = 'Msb'
-        section_config = self.config.get_section_config(name)
-        return section_config
+    def get_msb_config(self):
+        msb = self.config.get_section_config('Msb')
+        return msb
 
     def is_logged_in(self):
         session_requests = self.session
@@ -125,8 +123,6 @@ class Msb:
                 '_password': password,
                 '_verifyCode': captcha_text
             }
-            print(captcha_text)
-            exit(1)
             # Perform login
             login_post = session_requests.post(login_url + '/Request', payload)
             tree = html.fromstring(login_post.text)
@@ -147,14 +143,14 @@ class Msb:
                 if self.login_failed >= self.max_attempt_login:
                     if self.debug_mode == 'true':
                         self.log.log(
-                            "Can not login " + self.name + " with " + str(self.max_attempt_login) + " attempts",
+                            "Can not login Msb with " + str(self.max_attempt_login) + " attempts",
                             'error')
                     return 0
                 return self.perform_login()
         else:
             session_requests.set_changing_proxy(0)
             if self.debug_mode == 'true':
-                self.log.log('Login ' + self.name + ' successfully by using old session', 'debug')
+                self.log.log('Login Msb successfully by using old session', 'debug')
         token = session_requests.get_token()
         if token is None:
             return 0
@@ -181,7 +177,7 @@ class Msb:
                 account_name = account['acctName']
                 account_number = account['acctNo']
                 account_balance = account['availableBalance']
-                msb_account = MsbAccount(account_name, account_number)
+                msb_account = MsbAccount(account_name, account_number, self.payment.get_id())
                 msb_account.set_balance(account_balance)
                 msb_account.update_account()
                 account_info_url = self.account_info_url
@@ -194,8 +190,6 @@ class Msb:
                     'fromDate': current_date.rstrip('\r\n'),
                     'toDate': time.strftime("%Y-%m-%d")
                 }
-                print(account_info_url)
-                print(payload)
                 account_post = session_requests.post(account_info_url, payload)
                 response = account_post.json()
                 if response['status'] == '200':
@@ -204,7 +198,7 @@ class Msb:
                         self.save_transaction(msb_account, history)
         self.log.update_log('Maritimebank', self.username)
         self.history.set_current_update('maritimebank', "%Y-%m-%d")
-        self.log.log(str(self.total_transactions) + ' ' + self.name + ' transaction(s) created', 'message')
+        self.log.log(str(self.total_transactions) + ' Msb transaction(s) created', 'message')
 
     def save_transaction(self, account, history):
         trading_date = self.convert_trading_date(history['transferDate'])

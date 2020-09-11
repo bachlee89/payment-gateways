@@ -21,6 +21,7 @@ def run():
     threads = []
     sessions = {}
     proxy = Proxy().random_proxy()
+    proxy = {}
     while 1:
         payments = payment.get_payments()
         for p in payments:
