@@ -48,7 +48,7 @@ class Techcombank:
         selenium = Selenium()
         if self.session.get_driver() is None:
             if self.session.get_last_driver() is None or self.session.get_last_driver() is 'Firefox':
-                driver = selenium.get_chrome_driver(self.proxy)
+                driver = selenium.get_firefox_driver(self.proxy)
                 self.session.set_last_driver('Chrome')
             else:
                 driver = selenium.get_firefox_driver(self.proxy)
