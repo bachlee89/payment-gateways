@@ -167,7 +167,7 @@ class VietcombankEnterprise:
         account_id = account.get_account_id()
 
         if detail[2].text is not '':
-            balance = float(
+            balance = -float(
                 detail[2].text.replace(',', '').replace(
                     ' ', ''))
         else:
