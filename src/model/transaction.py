@@ -58,7 +58,7 @@ class Transaction:
             codes = self.user.get_codes()
             user_code = None
             for code in codes:
-                if code[0] in self.get_description():
+                if code[0].lower() in self.get_description().lower():
                     user_code = str(code[0])
                     break
             # Create new transaction
