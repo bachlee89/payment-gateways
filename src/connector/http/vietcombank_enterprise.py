@@ -181,6 +181,8 @@ class VietcombankEnterprise:
         if transaction.save() == 1:
             self.total_transactions = self.total_transactions + 1
             self.email_transport.send_transaction_email(account, transaction)
+        else:
+            self.log.log("Can not save transaction " + transaction.get_reference_number(), 'error')
 
     def get_captcha(self, driver):
         img_data = WebDriverWait(driver, 10).until(
