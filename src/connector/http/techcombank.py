@@ -59,13 +59,13 @@ class Techcombank:
             try:
                 driver.get(login_url)
                 # Get username input element
-                element = WebDriverWait(driver, 30).until(
+                element = WebDriverWait(driver, 60).until(
                     EC.presence_of_element_located(
                         (By.XPATH, '//input[@name="signOnName"]'))
                 )
                 element.send_keys(username)
                 # element.send_keys(Keys.RETURN)
-                element = WebDriverWait(driver, 30).until(
+                element = WebDriverWait(driver, 60).until(
                     EC.presence_of_element_located(
                         (By.XPATH, '//input[@name="password"]'))
                 )
@@ -73,7 +73,7 @@ class Techcombank:
                 element.send_keys(password)
                 # element.send_keys(Keys.RETURN)
                 # Get submit button element
-                element = WebDriverWait(driver, 30).until(
+                element = WebDriverWait(driver, 60).until(
                     EC.presence_of_element_located(
                         (By.XPATH, '//input[@name="btn_login"]'))
                 )
@@ -101,7 +101,7 @@ class Techcombank:
                     search_btn.click()
                     # Update account information
                     try:
-                        WebDriverWait(driver, 60).until(
+                        WebDriverWait(driver, 120).until(
                             EC.visibility_of_element_located(
                                 (By.XPATH, "//table[@id='enqheader']//tr"))
                         )
