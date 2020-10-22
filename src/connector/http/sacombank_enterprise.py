@@ -7,7 +7,7 @@ import time
 import re
 
 sys.path.append('../../')
-from model.vietcombank import VietcombankAccount
+from model.sacombank import SacombankAccount
 from model.transaction import Transaction
 from model.config import Config
 from model.log import Log
@@ -54,7 +54,7 @@ class SacombankEnterprise:
 
     def perform_login(self):
         corp_url = self.corp_url
-        username = self.username
+        # username = self.username
         password = self.password
         selenium = Selenium()
         if self.session.get_driver() is None:
@@ -96,9 +96,7 @@ class SacombankEnterprise:
                             (By.XPATH, '//input[@id="STU_VALIDATE_CREDENTIALS"]'))
                     )
                     element.click()
-
                     time.sleep(5)
-                    # Checkbox
                     try:
                         element = WebDriverWait(driver, 10).until(
                             EC.presence_of_element_located(
@@ -115,59 +113,60 @@ class SacombankEnterprise:
                     )
                     element.send_keys(password)
                     element.send_keys(Keys.RETURN)
-                    time.sleep(60)
-                    # click to account menu
-                    try:
-                        account_link = WebDriverWait(driver, 10).until(
-                            EC.element_to_be_clickable(
-                                (By.XPATH,
-                                 "//a[contains(@href,'TransactionDetail')]"))
-                        )
-                        account_link.click()
-                        self.login_failed = 0
-                        break
-                    except:
-                        self.login_failed += 1
-                        if self.login_failed > self.max_attempt_login:
-                            driver.close()
-                            self.history.set_current_update('vietcombank_enterprise', "%d/%m/%Y")
-                            self.session.set_driver(None)
-
-                # Update account information
-                try:
-                    # driver.execute_script("window.scrollTo(0, 800);")
                     time.sleep(5)
-                    search_button = WebDriverWait(driver, 10).until(
-                        EC.element_to_be_clickable(
-                            (By.XPATH,
-                             '//input[@id="ctl00_Content_TransactionDetail_TransByDate"]'))
-                    )
-                    search_button.click()
+                    # Update Account Information
                     WebDriverWait(driver, 10).until(
                         EC.visibility_of_element_located(
-                            (By.XPATH, "//form[@id='aspnetForm']"))
+                            (By.XPATH, "//table[@id='HWListTable10072682']//tr/td"))
                     )
                     account_info = driver.find_elements_by_xpath(
-                        "//table[@class='tbllisting hasborder']//tr/td[position()=2]")
-                    account_name = account_info[0].text.strip()
-                    account_number = account_info[2].text.strip()
-                    account_balance = float(account_info[4].text.strip().replace(' VND', '').replace(',', ''))
+                        "//table[@id='HWListTable10072682']//tr/td")
+                    account_number = account_info[0].text.strip()
+                    account_name = self.payment.get_username()
+                    account_balance = float(
+                        account_info[2].text.strip().replace('\n', '').replace('VND', '').replace('.', ''))
                     account = self.update_account(account_name, account_number, account_balance, self.payment.get_id())
-                    transactions = driver.find_elements_by_xpath(
-                        "//div[@id='ctl00_Content_TransactionDetail_Pn_TransDetailByDate']")
-                    for row in transactions:
-                        columns = row.find_elements_by_xpath(".//tr[@valign='top']/td")
-                        self.save_transaction(account, columns)
-                    self.log.update_log('Techcombank', self.username)
-                    self.log.log("Vcb " + self.payment.get_type() + self.payment.get_username() + ": " + str(
-                        self.total_transactions) + ' transaction(s) created', 'message')
-                    self.session.set_changing_proxy(0)
-                except:
-                    self.log.log(
-                        "Vcb " + self.payment.get_type() + self.payment.get_username() + ": " + "Cannot load transactions",
-                        'error')
-                    self.log.log(str(sys.exc_info()), 'error')
-                    self.session.set_changing_proxy(1)
+                    # click to transaction menu
+                    action_link = WebDriverWait(driver, 10).until(
+                        EC.element_to_be_clickable(
+                            (By.XPATH,
+                             "//a[contains(@name,'HREF_Giao_dch')]"))
+                    )
+                    hover_action = ActionChains(driver).move_to_element(action_link)
+                    hover_action.perform()
+                    trans_link = WebDriverWait(driver, 10).until(
+                        EC.element_to_be_clickable(
+                            (By.XPATH,
+                             "//a[contains(@id,'ID_IL_CTXNS_30')]"))
+                    )
+                    hover_trans = ActionChains(driver).move_to_element(trans_link)
+                    hover_trans.perform()
+                    all_trans = WebDriverWait(driver, 10).until(
+                        EC.element_to_be_clickable(
+                            (By.XPATH,
+                             "//a[contains(@id,'Qun-l-giao-dch_Tt-c-giao-dch')]"))
+                    )
+                    all_trans.click()
+                    try:
+                        WebDriverWait(driver, 10).until(
+                            EC.visibility_of_element_located(
+                                (By.XPATH, "//table[@id='AllTransactionListingCorp']//tbody"))
+                        )
+                        transactions = driver.find_elements_by_xpath(
+                            "//table[@id='AllTransactionListingCorp']//tbody[position() >= 0 and position() <= 10]")
+                        for row in transactions:
+                            columns = row.find_elements_by_xpath(".//tr/td")
+                            self.save_transaction(account, columns, driver)
+                        self.log.update_log('Sacombank', self.username)
+                        self.log.log("Vcb " + self.payment.get_type() + self.payment.get_username() + ": " + str(
+                            self.total_transactions) + ' transaction(s) created', 'message')
+                        self.session.set_changing_proxy(0)
+                    except:
+                        self.log.log(
+                            "Vcb " + self.payment.get_type() + self.payment.get_username() + ": " + "Cannot load transactions",
+                            'error')
+                        self.log.log(str(sys.exc_info()), 'error')
+                        self.session.set_changing_proxy(1)
 
 
             except:
@@ -179,25 +178,30 @@ class SacombankEnterprise:
             self.history.set_current_update('vietcombank_enterprise', "%d/%m/%Y")
             self.session.set_driver(None)
 
-    def save_transaction(self, account, detail):
+    def save_transaction(self, account, detail, driver):
         trading_date = self.convert_trading_date(
-            detail[0].text)
-        reference_number = detail[1].text.replace(
-            'Số tham chiếu: ', '')
+            detail[5].text)
+        reference_number = detail[0].text
         account_id = account.get_account_id()
+        balance = float(
+            detail[8].text.strip().replace('\n', '').replace('VND', '').replace('.', ''))
 
-        if detail[2].text is not '':
-            balance = -float(
-                detail[2].text.replace(',', '').replace(
-                    ' ', ''))
-        else:
-            balance = float(
-                detail[3].text.replace(',', '').replace(
-                    ' ', ''))
-
-        description = detail[4].text
-
+        tran_type = detail[2].text
+        if tran_type is 'Thanh toán' or type is 'Chuyển khoản':
+            balance = -balance
+        detail[0].click()
+        time.sleep(5)
+        WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located(
+                (By.XPATH, "//span[@id='PageConfigurationMaster_CVTXNW__1:HREF_ViewTxnDetailsFG.ENT_REMARKS']"))
+        )
+        description = driver.find_element_by_xpath(
+            "//span[@id='PageConfigurationMaster_CVTXNW__1:HREF_ViewTxnDetailsFG.ENT_REMARKS']").text
+        close_btn = driver.find_element_by_xpath(
+            "//button[@id='closeIcon']")
         transaction = Transaction(account_id, reference_number, trading_date, balance, description)
+        close_btn.click()
+        time.sleep(5)
         if transaction.save() == 1:
             self.total_transactions = self.total_transactions + 1
             self.email_transport.send_transaction_email(account, transaction)
@@ -220,11 +224,11 @@ class SacombankEnterprise:
         return self.get_captcha(driver)
 
     def convert_trading_date(self, trading_date):
-        date = datetime.strptime(trading_date, '%Y-%m-%d')
+        date = datetime.strptime(trading_date, '%d-%m-%Y')
         return date.strftime('%Y-%m-%d')
 
     def update_account(self, name, number, balance, payment_id):
-        account = VietcombankAccount(name, number, payment_id)
+        account = SacombankAccount(name, number, payment_id)
         account.set_balance(balance)
         account.update_account()
         return account
