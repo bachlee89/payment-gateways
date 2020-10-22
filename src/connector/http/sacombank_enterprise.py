@@ -187,7 +187,7 @@ class SacombankEnterprise:
             detail[8].text.strip().replace('\n', '').replace('VND', '').replace('.', ''))
 
         tran_type = detail[2].text
-        if tran_type is 'Thanh toán' or type is 'Chuyển khoản':
+        if tran_type == 'Thanh toán' or type == 'Chuyển khoản':
             balance = -balance
         detail[0].click()
         time.sleep(5)
