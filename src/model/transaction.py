@@ -1,6 +1,8 @@
 from db.connection import Connection
 from .time import Time
 from .user import User
+import uuid
+import sys
 
 
 class Transaction:
@@ -62,12 +64,39 @@ class Transaction:
                     user_code = str(code[0])
                     break
             # Create new transaction
-            sql = "INSERT INTO `transaction` (`account_id`, `reference_number`, `trading_date`, `balance`, `description`,`code`,`created_at`) VALUES (%s, %s, %s, %s, %s,%s,%s)"
-            connection.query(sql, (
-                self.get_account_id(), self.get_reference_number(), self.get_trading_date(), self.get_balance(),
-                self.get_description(), user_code, self.get_current_time()))
+            args = sys.argv
+            project = None
+            if len(args) > 1:
+                project = str(args[1])
+            if project == 'starlight':
+                unique_code = self.get_unique_string()
+                sql = "INSERT INTO `transaction` (`trx_id`,`account_id`, `reference_number`, `trading_date`, `balance`, `description`,`code`,`created_at`) VALUES (%s, %s, %s, %s, %s, %s, %s,%s)"
+                connection.query(sql, (
+                    unique_code, self.get_account_id(), self.get_reference_number(), self.get_trading_date(),
+                    self.get_balance(),
+                    self.get_description(), user_code, self.get_current_time()))
+            else:
+                sql = "INSERT INTO `transaction` (`account_id`, `reference_number`, `trading_date`, `balance`, `description`,`code`,`created_at`) VALUES (%s, %s, %s, %s, %s,%s,%s)"
+                connection.query(sql, (
+                    self.get_account_id(), self.get_reference_number(), self.get_trading_date(), self.get_balance(),
+                    self.get_description(), user_code, self.get_current_time()))
             return 1
         return 0
+
+    def get_unique_string(self, string_length=10):
+        random = str(uuid.uuid4())
+        random = random.upper()
+        random = random.replace("-", "")
+        random_string = random[0:string_length]
+        if self.check_unique(random_string) is not None:
+            return self.get_unique_string()
+        return random_string
+
+    def check_unique(self, random_string):
+        connection = self.connection
+        sql = "SELECT `id` FROM `transaction` where `trx_id`=%s"
+        transaction = connection.select(sql, random_string)
+        return transaction
 
     def get_status(self, reference_number):
         connection = self.connection
