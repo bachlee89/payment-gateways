@@ -158,12 +158,12 @@ class SacombankEnterprise:
                             columns = row.find_elements_by_xpath(".//tr/td")
                             self.save_transaction(account, columns, driver)
                         self.log.update_log('Sacombank', self.username)
-                        self.log.log("Vcb " + self.payment.get_type() + self.payment.get_username() + ": " + str(
+                        self.log.log("Scb " + self.payment.get_type() + self.payment.get_username() + ": " + str(
                             self.total_transactions) + ' transaction(s) created', 'message')
                         self.session.set_changing_proxy(0)
                     except:
                         self.log.log(
-                            "Vcb " + self.payment.get_type() + self.payment.get_username() + ": " + "Cannot load transactions",
+                            "Scb " + self.payment.get_type() + self.payment.get_username() + ": " + "Cannot load transactions",
                             'error')
                         self.log.log(str(sys.exc_info()), 'error')
                         self.session.set_changing_proxy(1)
@@ -175,7 +175,7 @@ class SacombankEnterprise:
                 self.log.log(str(sys.exc_info()), 'debug')
 
             driver.close()
-            self.history.set_current_update('vietcombank_enterprise', "%d/%m/%Y")
+            self.history.set_current_update('sacombank_enterprise', "%d/%m/%Y")
             self.session.set_driver(None)
 
     def save_transaction(self, account, detail, driver):
