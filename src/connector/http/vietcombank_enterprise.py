@@ -42,7 +42,7 @@ class VietcombankEnterprise:
         self.total_transactions = 0
         self.history = History()
         self.code = GenerateCode()
-        self.max_attempt_login = 20
+        self.max_attempt_login = 5
         self.login_failed = 0
         self.session = session
         self.proxy = proxy
@@ -54,8 +54,6 @@ class VietcombankEnterprise:
 
     def perform_login(self):
         login_url = self.login_url
-        username = self.username
-        password = self.password
         selenium = Selenium()
         if self.session.get_driver() is None:
             if self.session.get_last_driver() is None or self.session.get_last_driver() is 'Firefox':
@@ -68,77 +66,59 @@ class VietcombankEnterprise:
             self.session.set_driver(driver)
 
             try:
-                while True:
-                    driver.get(login_url)
-                    captcha = self.get_captcha(driver)
-                    # Get username input element
-                    element = WebDriverWait(driver, 10).until(
-                        EC.presence_of_element_located(
-                            (By.XPATH, '//input[@name="ctl00$Content$Login$TenTC"]'))
-                    )
-                    element.send_keys(username)
-                    # Get password input element
-                    element = WebDriverWait(driver, 10).until(
-                        EC.presence_of_element_located(
-                            (By.XPATH, '//input[@name="ctl00$Content$Login$MatKH"]'))
-                    )
-                    element.send_keys(password)
-                    # Get captcha input element
-                    element = WebDriverWait(driver, 10).until(
-                        EC.presence_of_element_located(
-                            (By.XPATH, '//input[@name="ctl00$Content$Login$ImgStr"]'))
-                    )
-                    element.send_keys(captcha)
-                    # element.send_keys(Keys.RETURN)
-                    # Get submit button element
-                    element = WebDriverWait(driver, 10).until(
-                        EC.presence_of_element_located(
-                            (By.XPATH, '//input[@id="ctl00_Content_Login_LoginBtn"]'))
-                    )
-                    element.click()
-                    # click to account menu
-                    try:
-                        account_link = WebDriverWait(driver, 10).until(
-                            EC.element_to_be_clickable(
-                                (By.XPATH,
-                                 "//a[contains(@href,'TransactionDetail')]"))
-                        )
-                        account_link.click()
-                        self.login_failed = 0
-                        break
-                    except:
-                        self.login_failed += 1
-                        if self.login_failed > self.max_attempt_login:
-                            driver.close()
-                            self.history.set_current_update('vietcombank_enterprise', "%d/%m/%Y")
-                            self.session.set_driver(None)
-
+                driver.get(login_url)
+                if self.solve_captcha(driver) is False:
+                    driver.close()
+                    return False
+                time.sleep(5)
                 # Update account information
                 try:
                     # driver.execute_script("window.scrollTo(0, 800);")
-                    time.sleep(5)
-                    search_button = WebDriverWait(driver, 10).until(
-                        EC.element_to_be_clickable(
-                            (By.XPATH,
-                             '//input[@id="ctl00_Content_TransactionDetail_TransByDate"]'))
-                    )
-                    search_button.click()
                     WebDriverWait(driver, 10).until(
                         EC.visibility_of_element_located(
-                            (By.XPATH, "//form[@id='aspnetForm']"))
+                            (By.XPATH, "//tbody[@id='dstkdd-tbody']"))
                     )
                     account_info = driver.find_elements_by_xpath(
-                        "//table[@class='tbllisting hasborder']//tr/td[position()=2]")
-                    account_name = account_info[0].text.strip()
-                    account_number = account_info[2].text.strip()
-                    account_balance = float(account_info[4].text.strip().replace(' VND', '').replace(',', ''))
+                        "//tbody[@id='dstkdd-tbody']/tr/td")
+                    account_name = self.payment.get_username()
+                    account_number = account_info[0].text.strip()
+                    account_balance = float(account_info[2].text.strip().replace(' VND', '').replace(',', ''))
                     account = self.update_account(account_name, account_number, account_balance, self.payment.get_id())
+                    WebDriverWait(driver, 10).until(
+                        EC.presence_of_element_located(
+                            (By.XPATH, "//a[contains(@href,'/IbankingCorp/Accounts/TransactionDetail.aspx')]"))
+                    )
+                    reference_links = driver.find_elements_by_xpath(
+                        "//a[contains(@href,'/IbankingCorp/Accounts/TransactionDetail.aspx')]")
+                    reference_links[2].click()
+                    view_link = WebDriverWait(driver, 10).until(
+                        EC.presence_of_element_located(
+                            (By.XPATH, "//a[contains(@id,'bdsdList-tab')]"))
+                    )
+                    driver.execute_script("arguments[0].scrollIntoView();", view_link)
+                    time.sleep(5)
+                    view_link.click()
+                    tran_by_date = WebDriverWait(driver, 10).until(
+                        EC.presence_of_element_located(
+                            (By.XPATH, "//a[contains(@id,'TransByDate')]"))
+                    )
+                    tran_by_date.click()
+                    time.sleep(5)
+                    WebDriverWait(driver, 10).until(
+                        EC.presence_of_element_located(
+                            (By.XPATH, "//table[@id='tbTranHis']"))
+                    )
+                    trans_foot = WebDriverWait(driver, 10).until(
+                        EC.presence_of_element_located(
+                            (By.XPATH, "//div[@id='tbTranHis-footer']"))
+                    )
+                    driver.execute_script("arguments[0].scrollIntoView();", trans_foot)
                     transactions = driver.find_elements_by_xpath(
-                        "//div[@id='ctl00_Content_TransactionDetail_Pn_TransDetailByDate']")
+                        "//table[@id='tbTranHis']//tbody/tr[position() >= 0 and position() <= 50]")
                     for row in transactions:
-                        columns = row.find_elements_by_xpath(".//tr[@valign='top']/td")
+                        columns = row.find_elements_by_xpath("td")
                         self.save_transaction(account, columns)
-                    self.log.update_log('Techcombank', self.username)
+                    self.log.update_log('Vietcombank', self.username)
                     self.log.log("Vcb " + self.payment.get_type() + self.payment.get_username() + ": " + str(
                         self.total_transactions) + ' transaction(s) created', 'message')
                     self.session.set_changing_proxy(0)
@@ -154,7 +134,6 @@ class VietcombankEnterprise:
                 exc_info = sys.exc_info()
                 traceback.print_exception(*exc_info)
                 self.log.log(str(sys.exc_info()), 'debug')
-
             driver.close()
             self.history.set_current_update('vietcombank_enterprise', "%d/%m/%Y")
             self.session.set_driver(None)
@@ -169,11 +148,11 @@ class VietcombankEnterprise:
         if detail[2].text is not '':
             balance = -float(
                 detail[2].text.replace(',', '').replace(
-                    ' ', ''))
+                    ' ', '').replace('VND', ''))
         else:
             balance = float(
                 detail[3].text.replace(',', '').replace(
-                    ' ', ''))
+                    ' ', '').replace('VND', ''))
 
         description = detail[4].text
 
@@ -182,7 +161,7 @@ class VietcombankEnterprise:
             self.total_transactions = self.total_transactions + 1
             self.email_transport.send_transaction_email(account, transaction)
 
-    def get_captcha(self, driver):
+    def solve_captcha(self, driver):
         img_data = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located(
                 (By.XPATH, "//img[@id='ctl00_Content_Login_Captcha_Captcha']"))
@@ -191,9 +170,55 @@ class VietcombankEnterprise:
         self.captcha.save_from_source(img_file, 'png')
         captcha_text = self.captcha.resolve(True)
         if re.match("^[a-zA-Z0-9]{6}$", captcha_text):
-            return captcha_text
+            captcha = captcha_text
+            username = self.username
+            password = self.password
+            # Get username input element
+            element = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located(
+                    (By.XPATH, '//input[@name="ctl00$Content$Login$TenTC"]'))
+            )
+            element.send_keys(username)
+            # Get password input element
+            element = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located(
+                    (By.XPATH, '//input[@name="ctl00$Content$Login$MatKH"]'))
+            )
+            element.send_keys(password)
+            # Get captcha input element
+            element = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located(
+                    (By.XPATH, '//input[@name="ctl00$Content$Login$ImgStr"]'))
+            )
+            element.send_keys(captcha)
+            # element.send_keys(Keys.RETURN)
+            # Get submit button element
+            element = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located(
+                    (By.XPATH, '//input[@id="ctl00_Content_Login_LoginBtn"]'))
+            )
+            element.click()
+            # click to account menu
+            try:
+                list_account = WebDriverWait(driver, 5).until(
+                    EC.presence_of_element_located(
+                        (By.XPATH,
+                         '//a[@id="ctl00_QuickNavigation_NaviRepeater_ctl01_NaviLink"]'))
+                )
+                time.sleep(5)
+                list_account.click()
+                self.login_failed = 0
+                return True
+            except:
+                self.login_failed += 1
+                if self.login_failed > self.max_attempt_login:
+                    self.history.set_current_update('vietcombank_enterprise', "%d/%m/%Y")
+                    self.session.set_driver(None)
+                    return False
+                driver.back()
+                return self.solve_captcha(driver)
         driver.refresh()
-        return self.get_captcha(driver)
+        return self.solve_captcha(driver)
 
     def convert_trading_date(self, trading_date):
         date = datetime.strptime(trading_date, '%Y-%m-%d')
