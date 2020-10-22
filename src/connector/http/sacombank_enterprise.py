@@ -167,12 +167,10 @@ class SacombankEnterprise:
                             'error')
                         self.log.log(str(sys.exc_info()), 'error')
                         self.session.set_changing_proxy(1)
-
-
             except:
                 exc_info = sys.exc_info()
                 traceback.print_exception(*exc_info)
-                self.log.log(str(sys.exc_info()), 'debug')
+                self.log.log("Scb error: " + str(sys.exc_info()), 'debug')
 
             driver.close()
             self.history.set_current_update('sacombank_enterprise', "%d/%m/%Y")
