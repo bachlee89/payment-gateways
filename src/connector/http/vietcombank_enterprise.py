@@ -24,6 +24,8 @@ from model.email import EmailTransport
 import traceback
 from model.history import History
 from converter.captcha import CaptchaResolver
+import sys
+import os
 
 
 class VietcombankEnterprise:
@@ -126,7 +128,9 @@ class VietcombankEnterprise:
                     self.log.log(
                         "Vcb " + self.payment.get_type() + self.payment.get_username() + ": " + "Cannot load transactions",
                         'error')
-                    self.log.log(str(sys.exc_info()), 'error')
+                    exc_type, exc_obj, exc_tb = sys.exc_info()
+                    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                    self.log.log(str(exc_type) + '-' + fname + '-' + exc_tb.tb_lineno, 'error')
                     self.session.set_changing_proxy(1)
 
 
