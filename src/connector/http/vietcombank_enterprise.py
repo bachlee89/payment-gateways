@@ -115,7 +115,7 @@ class VietcombankEnterprise:
                     )
                     driver.execute_script("arguments[0].scrollIntoView();", trans_foot)
                     transactions = driver.find_elements_by_xpath(
-                        "//table[@id='tbTranHis']//tbody/tr[position() >= 0 and position() <= 50]")
+                        "//table[@id='tbTranHis']//tbody/tr[position() >= 0 and position() <= 25]")
                     for row in transactions:
                         columns = row.find_elements_by_xpath("td")
                         self.save_transaction(account, columns)
@@ -209,7 +209,7 @@ class VietcombankEnterprise:
                 list_account = WebDriverWait(driver, 5).until(
                     EC.presence_of_element_located(
                         (By.XPATH,
-                         '//a[@id="ctl00_QuickNavigation_NaviRepeater_ctl01_NaviLink"]'))
+                         "//a[contains(@href,'Accounts/ListAccounts.aspx')]"))
                 )
                 time.sleep(5)
                 list_account.click()
