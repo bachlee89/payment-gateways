@@ -100,7 +100,7 @@ class TechcombankEnterprise:
 
                 # Update account information
                 try:
-                    search = WebDriverWait(driver, 15).until(
+                    search = WebDriverWait(driver, 30).until(
                         EC.visibility_of_element_located(
                             (By.XPATH, "//img[contains(@src,'drilldown/View.png')]"))
                     )
@@ -113,7 +113,7 @@ class TechcombankEnterprise:
                     search.click()
                     window_after = driver.window_handles[1]
                     driver.switch_to_window(window_after)
-                    WebDriverWait(driver, 15).until(
+                    WebDriverWait(driver, 30).until(
                         EC.visibility_of_element_located(
                             (By.XPATH, "//table[contains(@id,'datadisplay_DATA')]"))
                     )
