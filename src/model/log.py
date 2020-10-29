@@ -7,14 +7,15 @@ from datetime import datetime
 
 class Log:
     def __init__(self):
-        self.path = Config().get_base_dir('var') + 'log/'
+        self.config = Config()
+        self.path = self.config.get_base_dir('var') + 'log/'
         self.time = Time()
         self.email_transport = EmailTransport()
         self.connection = Connection()
 
     def log(self, message, type="message"):
         current_time = "[" + self.time.get_current_time() + "]"
-        with open(self.path + 'system.log', 'a') as f:
+        with open(self.path + self.config.get_project() + '-system.log', 'a') as f:
             message = current_time + "[" + type + "]: " + message
             f.write(message + '\n')
             return 1

@@ -5,14 +5,18 @@ import sys
 class Config:
     def __init__(self):
         self.config = configparser.ConfigParser()
-        project = None
-        args = sys.argv
-        if len(args) > 1:
-            project = args[1]
+        project = self.get_project()
         if project is not None:
             self.config.read(self.get_base_dir('etc') + project + '/' + 'config.ini')
         else:
             self.config.read(self.get_base_dir('etc') + 'config.ini')
+
+    def get_project(self):
+        project = None
+        args = sys.argv
+        if len(args) > 1:
+            project = args[1]
+        return project
 
     def get_section_config(self, section):
         config = {}
