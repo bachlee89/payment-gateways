@@ -17,13 +17,13 @@ import sys
 
 def run():
     systemLog = Log()
-    payment = Payment()
     threads = []
     sessions = {}
     proxy = Proxy().random_proxy()
     while 1:
-        payments = payment.get_payments()
+        payments = Payment().get_payments()
         for p in payments:
+            payment = Payment()
             payment = payment.set_payment(p)
             name = payment.get_name()
             type = payment.get_type()
