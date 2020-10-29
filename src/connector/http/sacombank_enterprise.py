@@ -163,14 +163,16 @@ class SacombankEnterprise:
                         self.session.set_changing_proxy(0)
                     except:
                         self.log.log(
-                            "Scb " + self.payment.get_type() + self.payment.get_username() + ": " + "Cannot load transactions",
+                            self.payment.get_name() + '-' + self.payment.get_type() + '-' + self.payment.get_username() + ": " + "Cannot load transactions",
                             'error')
                         self.log.log(str(sys.exc_info()), 'error')
                         self.session.set_changing_proxy(1)
             except:
                 exc_info = sys.exc_info()
                 traceback.print_exception(*exc_info)
-                self.log.log("Scb error: " + str(sys.exc_info()), 'debug')
+                self.log.log(
+                    self.payment.get_name() + '-' + self.payment.get_type() + '-' + self.payment.get_username() + ': ' + str(
+                        sys.exc_info()), 'debug')
 
             driver.close()
             self.history.set_current_update('sacombank_enterprise', "%d/%m/%Y")

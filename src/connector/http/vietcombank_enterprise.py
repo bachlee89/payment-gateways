@@ -121,12 +121,13 @@ class VietcombankEnterprise:
                         columns = row.find_elements_by_xpath("td")
                         self.save_transaction(account, columns)
                     self.log.update_log('Vietcombank', self.username)
-                    self.log.log("Vcb " + self.payment.get_type() + self.payment.get_username() + ": " + str(
-                        self.total_transactions) + ' transaction(s) created', 'message')
+                    self.log.log(
+                        self.payment.get_name() + '-' + self.payment.get_type() + '-' + self.payment.get_username() + ": " + str(
+                            self.total_transactions) + ' transaction(s) created', 'message')
                     self.session.set_changing_proxy(0)
                 except:
                     self.log.log(
-                        "Vcb " + self.payment.get_type() + self.payment.get_username() + ": " + "Cannot load transactions",
+                        self.payment.get_name() + '-' + self.payment.get_type() + '-' + self.payment.get_username() + ": " + "Cannot load transactions",
                         'error')
                     exc_type, exc_obj, exc_tb = sys.exc_info()
                     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
@@ -137,7 +138,9 @@ class VietcombankEnterprise:
             except:
                 exc_info = sys.exc_info()
                 traceback.print_exception(*exc_info)
-                self.log.log(str(sys.exc_info()), 'debug')
+                self.log.log(
+                    self.payment.get_name() + '-' + self.payment.get_type() + '-' + self.payment.get_username() + ': ' + str(
+                        sys.exc_info()), 'debug')
             driver.close()
             self.history.set_current_update('vietcombank_enterprise', "%d/%m/%Y")
             self.session.set_driver(None)
