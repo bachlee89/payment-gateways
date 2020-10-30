@@ -71,7 +71,7 @@ class SacombankEnterprise:
             try:
                 while True:
                     driver.get(corp_url)
-                    online_banking = WebDriverWait(driver, 15).until(
+                    online_banking = WebDriverWait(driver, 10).until(
                         EC.presence_of_element_located(
                             (By.XPATH, "//a[contains(@class,'btn-ebanking')]"))
                     )
@@ -79,27 +79,27 @@ class SacombankEnterprise:
                     time.sleep(5)
                     captcha = self.get_captcha(driver)
                     # Get username input element
-                    element = WebDriverWait(driver, 15).until(
+                    element = WebDriverWait(driver, 10).until(
                         EC.presence_of_element_located(
                             (By.XPATH, '//input[@name="AuthenticationFG.USER_PRINCIPAL"]'))
                     )
                     element.send_keys('14890491.STARLIGHT', Keys.ARROW_DOWN)
                     # Get captcha input element
-                    element = WebDriverWait(driver, 15).until(
+                    element = WebDriverWait(driver, 10).until(
                         EC.presence_of_element_located(
                             (By.XPATH, '//input[@name="AuthenticationFG.VERIFICATION_CODE"]'))
                     )
                     element.send_keys(captcha)
                     # element.send_keys(Keys.RETURN)
                     # Get submit button element
-                    element = WebDriverWait(driver, 15).until(
+                    element = WebDriverWait(driver, 10).until(
                         EC.presence_of_element_located(
                             (By.XPATH, '//input[@id="STU_VALIDATE_CREDENTIALS"]'))
                     )
                     element.click()
                     time.sleep(5)
                     try:
-                        element = WebDriverWait(driver, 15).until(
+                        element = WebDriverWait(driver, 10).until(
                             EC.presence_of_element_located(
                                 (By.XPATH, '//span[@id="LoginHDisplay.Ra4.C1"]'))
                         )
@@ -108,7 +108,7 @@ class SacombankEnterprise:
                         driver.close()
                         return self.perform_login()
                     # Get password input element
-                    element = WebDriverWait(driver, 15).until(
+                    element = WebDriverWait(driver, 10).until(
                         EC.presence_of_element_located(
                             (By.XPATH, '//input[@name="AuthenticationFG.ACCESS_CODE"]'))
                     )
@@ -116,7 +116,7 @@ class SacombankEnterprise:
                     element.send_keys(Keys.RETURN)
                     time.sleep(5)
                     # Update Account Information
-                    WebDriverWait(driver, 15).until(
+                    WebDriverWait(driver, 10).until(
                         EC.visibility_of_element_located(
                             (By.XPATH, "//table[@id='HWListTable10072682']//tr/td"))
                     )
@@ -128,28 +128,28 @@ class SacombankEnterprise:
                         account_info[2].text.strip().replace('\n', '').replace('VND', '').replace('.', ''))
                     account = self.update_account(account_name, account_number, account_balance, self.payment.get_id())
                     # click to transaction menu
-                    action_link = WebDriverWait(driver, 15).until(
+                    action_link = WebDriverWait(driver, 10).until(
                         EC.element_to_be_clickable(
                             (By.XPATH,
                              "//a[contains(@name,'HREF_Giao_dch')]"))
                     )
                     hover_action = ActionChains(driver).move_to_element(action_link)
                     hover_action.perform()
-                    trans_link = WebDriverWait(driver, 15).until(
+                    trans_link = WebDriverWait(driver, 10).until(
                         EC.element_to_be_clickable(
                             (By.XPATH,
                              "//a[contains(@id,'ID_IL_CTXNS_30')]"))
                     )
                     hover_trans = ActionChains(driver).move_to_element(trans_link)
                     hover_trans.perform()
-                    all_trans = WebDriverWait(driver, 15).until(
+                    all_trans = WebDriverWait(driver, 10).until(
                         EC.element_to_be_clickable(
                             (By.XPATH,
                              "//a[contains(@id,'Qun-l-giao-dch_Tt-c-giao-dch')]"))
                     )
                     all_trans.click()
                     try:
-                        WebDriverWait(driver, 30).until(
+                        WebDriverWait(driver, 10).until(
                             EC.visibility_of_element_located(
                                 (By.XPATH, "//table[@id='AllTransactionListingCorp']//tbody"))
                         )
@@ -195,7 +195,7 @@ class SacombankEnterprise:
             balance = -balance
         detail[0].click()
         time.sleep(5)
-        WebDriverWait(driver, 15).until(
+        WebDriverWait(driver, 10).until(
             EC.visibility_of_element_located(
                 (By.XPATH, "//span[@id='PageConfigurationMaster_CVTXNW__1:HREF_ViewTxnDetailsFG.ENT_REMARKS']"))
         )
@@ -211,7 +211,7 @@ class SacombankEnterprise:
             self.email_transport.send_transaction_email(account, transaction)
 
     def get_captcha(self, driver):
-        img_data = WebDriverWait(driver, 15).until(
+        img_data = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located(
                 (By.XPATH, "//img[@id='IMAGECAPTCHA']"))
         )
@@ -220,7 +220,7 @@ class SacombankEnterprise:
         captcha_text = self.captcha.resolve(True)
         if re.match("^[0-9]{4}$", captcha_text):
             return captcha_text
-        reload_captcha = WebDriverWait(driver, 15).until(
+        reload_captcha = WebDriverWait(driver, 10).until(
             EC.visibility_of_element_located(
                 (By.XPATH, "//img[@id='TEXTIMAGE']"))
         )
