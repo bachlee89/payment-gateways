@@ -69,108 +69,108 @@ class AcbEnterprise:
             self.session.set_driver(driver)
 
             try:
-                while True:
-                    driver.get(corp_url)
-                    online_banking = WebDriverWait(driver, 10).until(
-                        EC.presence_of_element_located(
-                            (By.XPATH, "//a[contains(@href,'obk/login.jsp')]"))
+                driver.get(corp_url)
+                online_banking = WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located(
+                        (By.XPATH, "//a[contains(@href,'obk/login.jsp')]"))
+                )
+                online_banking.click()
+                time.sleep(5)
+                captcha = self.get_captcha(driver)
+                # Get username input element
+                element = WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located(
+                        (By.XPATH, '//input[@name="UserName"]'))
+                )
+                element.send_keys(username, Keys.ARROW_DOWN)
+                # Get password input element
+                element = WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located(
+                        (By.XPATH, '//input[@name="PassWord"]'))
+                )
+                driver.execute_script(
+                    'arguments[0].style = ""; arguments[0].style.display = "block"; arguments[0].style.visibility = "visible";',
+                    element)
+                element.send_keys(password)
+                # Get captcha input element
+                element = WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located(
+                        (By.XPATH, '//input[@name="SecurityCode"]'))
+                )
+                driver.execute_script(
+                    'arguments[0].style = ""; arguments[0].style.display = "block"; arguments[0].style.visibility = "visible";',
+                    element)
+                element.send_keys(captcha)
+                time.sleep(2)
+                # Get submit button element
+                element = WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located(
+                        (By.XPATH, '//a[@id="button-dangnhap"]'))
+                )
+                element.click()
+                time.sleep(3)
+                try:
+                    # Update Account Information
+                    WebDriverWait(driver, 10).until(
+                        EC.visibility_of_element_located(
+                            (By.XPATH, "//table[@id='table']//tr/td"))
                     )
-                    online_banking.click()
-                    time.sleep(5)
-                    captcha = self.get_captcha(driver)
-                    # Get username input element
-                    element = WebDriverWait(driver, 10).until(
-                        EC.presence_of_element_located(
-                            (By.XPATH, '//input[@name="UserName"]'))
-                    )
-                    element.send_keys(username, Keys.ARROW_DOWN)
-                    # Get password input element
-                    element = WebDriverWait(driver, 10).until(
-                        EC.presence_of_element_located(
-                            (By.XPATH, '//input[@name="PassWord"]'))
-                    )
-                    driver.execute_script(
-                        'arguments[0].style = ""; arguments[0].style.display = "block"; arguments[0].style.visibility = "visible";',
-                        element)
-                    element.send_keys(password)
-                    # Get captcha input element
-                    element = WebDriverWait(driver, 10).until(
-                        EC.presence_of_element_located(
-                            (By.XPATH, '//input[@name="SecurityCode"]'))
-                    )
-                    driver.execute_script(
-                        'arguments[0].style = ""; arguments[0].style.display = "block"; arguments[0].style.visibility = "visible";',
-                        element)
-                    element.send_keys(captcha)
-                    time.sleep(2)
-                    # Get submit button element
-                    element = WebDriverWait(driver, 10).until(
-                        EC.presence_of_element_located(
-                            (By.XPATH, '//a[@id="button-dangnhap"]'))
-                    )
-                    element.click()
-                    time.sleep(3)
-                    try:
-                        # Update Account Information
-                        WebDriverWait(driver, 10).until(
-                            EC.visibility_of_element_located(
-                                (By.XPATH, "//table[@id='table']//tr/td"))
-                        )
-                        account_info = driver.find_elements_by_xpath(
-                            "//table[@id='table']//tr/td")
-                        account_number = account_info[0].text.strip()
-                        account_name = self.payment.get_username()
-                        account_balance = float(
-                            account_info[2].text.strip().replace(' ', '').replace('(VND)', '').replace('.', ''))
-                        account = self.update_account(account_name, account_number, account_balance,
-                                                      self.payment.get_id())
-                    except:
-                        driver.close()
-                        return self.perform_login()
+                    account_info = driver.find_elements_by_xpath(
+                        "//table[@id='table']//tr/td")
+                    account_number = account_info[0].text.strip()
+                    account_name = self.payment.get_username()
+                    account_balance = float(
+                        account_info[2].text.strip().replace(' ', '').replace('(VND)', '').replace('.', ''))
+                    account = self.update_account(account_name, account_number, account_balance,
+                                                  self.payment.get_id())
+                except:
+                    driver.close()
+                    return self.perform_login()
 
-                    # click to transaction menu
+                # click to transaction menu
 
-                    element = WebDriverWait(driver, 10).until(
-                        EC.presence_of_element_located(
-                            (By.XPATH, "//a[contains(@class,'acc_bold')]"))
-                    )
-                    element.click()
-                    time.sleep(3)
+                element = WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located(
+                        (By.XPATH, "//a[contains(@class,'acc_bold')]"))
+                )
+                element.click()
+                time.sleep(3)
 
-                    view_link = WebDriverWait(driver, 10).until(
-                        EC.element_to_be_clickable(
-                            (By.XPATH,
-                             "//input[contains(@onclick,'OutPrintByDate')]"))
+                view_link = WebDriverWait(driver, 10).until(
+                    EC.element_to_be_clickable(
+                        (By.XPATH,
+                         "//input[contains(@onclick,'OutPrintByDate')]"))
+                )
+                view_link.click()
+                try:
+                    window_after = driver.window_handles[1]
+                    driver.switch_to_window(window_after)
+                    WebDriverWait(driver, 10).until(
+                        EC.visibility_of_element_located(
+                            (By.XPATH, "//table[@id='table1']//tbody"))
                     )
-                    view_link.click()
-                    try:
-                        window_after = driver.window_handles[1]
-                        driver.switch_to_window(window_after)
-                        WebDriverWait(driver, 10).until(
-                            EC.visibility_of_element_located(
-                                (By.XPATH, "//table[@id='table1']//tbody"))
-                        )
-                        transactions = driver.find_elements_by_xpath(
-                            "//table[@id='table1']//tbody/tr[position() >= 0 and position() <= 10]")
-                        for row in transactions:
-                            columns = row.find_elements_by_xpath("td")
-                            self.save_transaction(account, columns)
-                        self.log.update_log('Acb', self.username)
-                        self.log.log(
-                            self.payment.get_name() + '-' + self.payment.get_type() + '-' + self.payment.get_username() + ": " + str(
-                                self.total_transactions) + ' transaction(s) created', 'message')
-                        self.session.set_changing_proxy(0)
-                    except:
-                        self.log.log(
-                            self.payment.get_name() + '-' + self.payment.get_type() + '-' + self.payment.get_username() + ": " + "Cannot load transactions",
-                            'error')
-                        exc_type, exc_obj, exc_tb = sys.exc_info()
-                        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                        self.log.log(
-                            self.payment.get_name() + '-' + self.payment.get_type() + '-' + self.payment.get_username() + ': ' + str(
-                                sys.exc_info()), 'debug')
-                        self.log.log(str(exc_type) + '-' + fname + '-' + str(exc_tb.tb_lineno), 'error')
-                        self.session.set_changing_proxy(1)
+                    transactions = driver.find_elements_by_xpath(
+                        "//table[@id='table1']//tbody/tr[position() >= 0 and position() <= 10]")
+                    for row in transactions:
+                        columns = row.find_elements_by_xpath("td")
+                        self.save_transaction(account, columns)
+                    self.log.update_log('Acb', self.username)
+                    self.log.log(
+                        self.payment.get_name() + '-' + self.payment.get_type() + '-' + self.payment.get_username() + ": " + str(
+                            self.total_transactions) + ' transaction(s) created', 'message')
+                    self.session.set_changing_proxy(0)
+                    driver.close()
+                except:
+                    self.log.log(
+                        self.payment.get_name() + '-' + self.payment.get_type() + '-' + self.payment.get_username() + ": " + "Cannot load transactions",
+                        'error')
+                    exc_type, exc_obj, exc_tb = sys.exc_info()
+                    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                    self.log.log(
+                        self.payment.get_name() + '-' + self.payment.get_type() + '-' + self.payment.get_username() + ': ' + str(
+                            sys.exc_info()), 'debug')
+                    self.log.log(str(exc_type) + '-' + fname + '-' + str(exc_tb.tb_lineno), 'error')
+                    self.session.set_changing_proxy(1)
             except:
                 exc_type, exc_obj, exc_tb = sys.exc_info()
                 fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
