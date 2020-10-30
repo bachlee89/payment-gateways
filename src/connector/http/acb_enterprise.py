@@ -160,7 +160,6 @@ class AcbEnterprise:
                             self.payment.get_name() + '-' + self.payment.get_type() + '-' + self.payment.get_username() + ": " + str(
                                 self.total_transactions) + ' transaction(s) created', 'message')
                         self.session.set_changing_proxy(0)
-                        driver.close()
                     except:
                         self.log.log(
                             self.payment.get_name() + '-' + self.payment.get_type() + '-' + self.payment.get_username() + ": " + "Cannot load transactions",
