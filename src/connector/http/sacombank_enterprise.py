@@ -55,7 +55,7 @@ class SacombankEnterprise:
 
     def perform_login(self):
         corp_url = self.corp_url
-        # username = self.username
+        username = self.username
         password = self.password
         selenium = Selenium()
         if self.session.get_driver() is None:
@@ -77,14 +77,23 @@ class SacombankEnterprise:
                     )
                     online_banking.click()
                     time.sleep(5)
-                    captcha = self.get_captcha(driver)
+                    try:
+                        # Click to ignore banner
+                        element = WebDriverWait(driver, 10).until(
+                            EC.presence_of_element_located(
+                                (By.XPATH, '//div[@id="pbanner"]'))
+                        )
+                        element.click()
+                    except:
+                        print('Banner not found')
                     # Get username input element
                     element = WebDriverWait(driver, 10).until(
                         EC.presence_of_element_located(
-                            (By.XPATH, '//input[@name="AuthenticationFG.USER_PRINCIPAL"]'))
+                            (By.XPATH, '//input[@id="AuthenticationFG.USER_PRINCIPAL"]'))
                     )
-                    element.send_keys('14890491.STARLIGHT', Keys.ARROW_DOWN)
+                    element.send_keys(username, Keys.ARROW_DOWN)
                     # Get captcha input element
+                    captcha = self.get_captcha(driver)
                     element = WebDriverWait(driver, 10).until(
                         EC.presence_of_element_located(
                             (By.XPATH, '//input[@name="AuthenticationFG.VERIFICATION_CODE"]'))
@@ -105,6 +114,7 @@ class SacombankEnterprise:
                         )
                         element.click()
                     except:
+                        print('Can not login')
                         driver.close()
                         return self.perform_login()
                     # Get password input element
@@ -131,33 +141,51 @@ class SacombankEnterprise:
                     action_link = WebDriverWait(driver, 10).until(
                         EC.element_to_be_clickable(
                             (By.XPATH,
-                             "//a[contains(@name,'HREF_Giao_dch')]"))
+                             "//a[contains(@name,'HREF_Ti_khon')]"))
                     )
                     hover_action = ActionChains(driver).move_to_element(action_link)
                     hover_action.perform()
+                    acc_link = WebDriverWait(driver, 10).until(
+                        EC.element_to_be_clickable(
+                            (By.XPATH,
+                             "//a[contains(@id,'Ti-khon_Tng-quan-ti-khon')]"))
+                    )
+                    hover_trans = ActionChains(driver).move_to_element(acc_link)
+                    hover_trans.perform()
+                    acc_link.click()
+                    # time.sleep(5)
                     trans_link = WebDriverWait(driver, 10).until(
                         EC.element_to_be_clickable(
                             (By.XPATH,
-                             "//a[contains(@id,'ID_IL_CTXNS_30')]"))
+                             "//a[contains(@id,'HREF_PageConfigurationMaster_CACCTSW__1:AccountSummaryFG')]"))
                     )
-                    hover_trans = ActionChains(driver).move_to_element(trans_link)
-                    hover_trans.perform()
-                    all_trans = WebDriverWait(driver, 10).until(
-                        EC.element_to_be_clickable(
-                            (By.XPATH,
-                             "//a[contains(@id,'Qun-l-giao-dch_Tt-c-giao-dch')]"))
-                    )
-                    all_trans.click()
+                    trans_link.click()
+                    try:
+                        time.sleep(5)
+                        WebDriverWait(driver, 5).until(
+                            EC.visibility_of_element_located(
+                                (By.XPATH, "//a[contains(@id,'PageConfigurationMaster_CACCTSW__1:errorlink1')]"))
+                        )
+                        driver.close()
+                        self.history.set_current_update('sacombank_enterprise', "%d/%m/%Y")
+                        self.session.set_driver(None)
+                        self.log.log(
+                            self.payment.get_name() + '-' + self.payment.get_type() + '-' + self.payment.get_username() + ": " + "No transactions today",
+                            'message')
+                        return False
+                    except:
+                        print('ok')
+                        time.sleep(1)
                     try:
                         WebDriverWait(driver, 10).until(
                             EC.visibility_of_element_located(
-                                (By.XPATH, "//table[@id='AllTransactionListingCorp']//tbody"))
+                                (By.XPATH, "//table[contains(@id,'HWListTable')]//tbody"))
                         )
                         transactions = driver.find_elements_by_xpath(
-                            "//table[@id='AllTransactionListingCorp']//tbody[position() >= 0 and position() <= 10]")
+                            "//table[contains(@id,'HWListTable')]//tbody[position() >= 0 and position() <= 10]")
                         for row in transactions:
                             columns = row.find_elements_by_xpath(".//tr/td")
-                            self.save_transaction(account, columns, driver)
+                            self.save_transaction(account, columns)
                         self.log.update_log('Sacombank', self.username)
                         self.log.log(
                             self.payment.get_name() + '-' + self.payment.get_type() + '-' + self.payment.get_username() + ": " + str(
@@ -182,30 +210,21 @@ class SacombankEnterprise:
             self.history.set_current_update('sacombank_enterprise', "%d/%m/%Y")
             self.session.set_driver(None)
 
-    def save_transaction(self, account, detail, driver):
-        trading_date = self.convert_trading_date(
-            detail[5].text)
+    def save_transaction(self, account, detail):
         reference_number = detail[0].text
+        trading_date = self.convert_trading_date(
+            detail[2].text)
         account_id = account.get_account_id()
-        balance = float(
-            detail[8].text.strip().replace('\n', '').replace('VND', '').replace('.', ''))
-
-        tran_type = detail[2].text
-        if tran_type == 'Thanh toán' or type == 'Chuyển khoản':
-            balance = -balance
-        detail[0].click()
-        time.sleep(5)
-        WebDriverWait(driver, 10).until(
-            EC.visibility_of_element_located(
-                (By.XPATH, "//span[@id='PageConfigurationMaster_CVTXNW__1:HREF_ViewTxnDetailsFG.ENT_REMARKS']"))
-        )
-        description = driver.find_element_by_xpath(
-            "//span[@id='PageConfigurationMaster_CVTXNW__1:HREF_ViewTxnDetailsFG.ENT_REMARKS']").text
-        close_btn = driver.find_element_by_xpath(
-            "//button[@id='closeIcon']")
+        description = detail[3].text
+        if detail[6].text is not '':
+            balance = -float(
+                detail[6].text.replace(',', '').replace(
+                    ' ', '').replace('VND', ''))
+        else:
+            balance = float(
+                detail[7].text.replace(',', '').replace(
+                    ' ', '').replace('VND', ''))
         transaction = Transaction(account_id, reference_number, trading_date, balance, description)
-        close_btn.click()
-        time.sleep(5)
         if transaction.save() == 1:
             self.total_transactions = self.total_transactions + 1
             self.email_transport.send_transaction_email(account, transaction)
