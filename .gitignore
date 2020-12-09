@@ -71,4 +71,4 @@ src/var
 src/etc/config.ini
 env/
 venv/
-.idea
+.idea/

@@ -113,7 +113,7 @@ class TechcombankEnterprise:
                     search.click()
                     window_after = driver.window_handles[1]
                     driver.switch_to_window(window_after)
-                    WebDriverWait(driver, 30).until(
+                    WebDriverWait(driver, 60).until(
                         EC.visibility_of_element_located(
                             (By.XPATH, "//table[contains(@id,'datadisplay_DATA')]"))
                     )
