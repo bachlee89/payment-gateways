@@ -54,8 +54,8 @@ class Transaction:
 
     def save(self):
         connection = self.connection
-        sql = "SELECT * FROM `transaction` where `reference_number`=%s and `account_id`=%s"
-        transaction = connection.select(sql, (self.get_reference_number(), self.get_account_id()))
+        sql = "SELECT * FROM `transaction` where ((`reference_number`=%s) or (`trading_date`=%s and `balance`=%s and `description`=%s)) and `account_id`=%s"
+        transaction = connection.select(sql, (self.get_reference_number(), self.get_trading_date(), self.get_balance(), self.get_description(), self.get_account_id()))
         if not transaction:
             codes = self.user.get_codes()
             user_code = None
@@ -68,7 +68,7 @@ class Transaction:
             project = None
             if len(args) > 1:
                 project = str(args[1])
-            if (project == 'starlight' or  project == 'limapay'):
+            if (project != 'financex'):
                 unique_code = self.get_unique_string()
                 sql = "INSERT INTO `transaction` (`trx_id`,`account_id`, `reference_number`, `trading_date`, `balance`, `description`,`code`,`created_at`) VALUES (%s, %s, %s, %s, %s, %s, %s,%s)"
                 connection.query(sql, (
