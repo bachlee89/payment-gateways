@@ -68,7 +68,7 @@ class Transaction:
             project = None
             if len(args) > 1:
                 project = str(args[1])
-            if project == 'starlight':
+            if (project == 'starlight' or  project == 'limapay'):
                 unique_code = self.get_unique_string()
                 sql = "INSERT INTO `transaction` (`trx_id`,`account_id`, `reference_number`, `trading_date`, `balance`, `description`,`code`,`created_at`) VALUES (%s, %s, %s, %s, %s, %s, %s,%s)"
                 connection.query(sql, (
