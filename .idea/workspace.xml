@@ -2,9 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="82e68ea3-69c9-41f1-bfed-0bd0fc7ec94e" name="Default" comment="Fix docker-compose">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/connector/http/techcombank_enterprise.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/connector/http/techcombank_enterprise.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/model/transaction.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/transaction.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -42,55 +39,6 @@
         <option value="Python Script" />
       </list>
     </option>
-  </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>border</find>
-      <find>balance_url</find>
-      <find>get_current_update</find>
-      <find>contains</find>
-      <find>MerchantId</find>
-      <find>set_changing_proxy</find>
-      <find>/helper</find>
-      <find>file</find>
-      <find>helper</find>
-      <find>self.file</find>
-      <find>dse_session_id</find>
-      <find>perform_login</find>
-      <find>exit</find>
-      <find>File</find>
-      <find>get_section_config</find>
-      <find>tcb_proxy</find>
-      <find>Transaction</find>
-      <find>set_driver</find>
-      <find>get_captcha</find>
-      <find>validate_captcha</find>
-      <find>update_transactions</find>
-      <find>get_token</find>
-      <find>set_toke</find>
-      <find>main</find>
-      <find>token</find>
-      <find>account_list_url</find>
-      <find>return</find>
-      <find>get_token_from_string</find>
-      <find>is_deb</find>
-      <find>print</find>
-    </findStrings>
-    <replaceStrings>
-      <replace>reference_number</replace>
-      <replace>description</replace>
-      <replace>username</replace>
-      <replace>payment-gateways-crawler</replace>
-      <replace>self.history</replace>
-      <replace>techcombank</replace>
-    </replaceStrings>
-    <dirStrings>
-      <dir>$PROJECT_DIR$/src/model</dir>
-      <dir>$PROJECT_DIR$</dir>
-      <dir>$PROJECT_DIR$/src/connector</dir>
-      <dir>$PROJECT_DIR$/src/connector/http</dir>
-      <dir>$PROJECT_DIR$/src</dir>
-    </dirStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -194,7 +142,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1525839621996</updated>
-      <workItem from="1607501644500" duration="3866000" />
+      <workItem from="1607501644500" duration="7106000" />
     </task>
     <task id="LOCAL-00059" summary="Msb do not need to use proxy">
       <created>1547520603828</created>
