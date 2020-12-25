@@ -144,7 +144,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1525839621996</updated>
-      <workItem from="1607501644500" duration="10211000" />
+      <workItem from="1607501644500" duration="11303000" />
     </task>
     <task id="LOCAL-00059" summary="Msb do not need to use proxy">
       <created>1547520603828</created>
@@ -548,5 +548,9 @@
       <screen x="0" y="23" width="1440" height="816" />
     </state>
     <state x="100" y="123" width="1240" height="614" key="DiffContextDialog/0.23.1440.816@0.23.1440.816" timestamp="1607503816216" />
+    <state x="378" y="187" width="683" height="486" key="find.popup" timestamp="1608867240870">
+      <screen x="0" y="23" width="1440" height="825" />
+    </state>
+    <state x="378" y="187" width="683" height="486" key="find.popup/0.23.1440.825@0.23.1440.825" timestamp="1608867240870" />
   </component>
 </project>
