@@ -109,7 +109,7 @@ class Transaction:
         return transaction[0]
 
     def get_account_vendor(self, account_id):
-            connection = self.connection
-            sql = "SELECT `vendor` FROM `account` where `number`=%s"
-            vendor = connection.select(sql, account_id)
-            return vendor[0]
+        connection = self.connection
+        sql = "SELECT `vendor` FROM `account` where `number`=%s"
+        vendor = connection.select(sql, account_id)
+        return vendor[0]
