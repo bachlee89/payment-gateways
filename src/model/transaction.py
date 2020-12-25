@@ -55,7 +55,7 @@ class Transaction:
     def save(self):
         connection = self.connection
         vendor = self.get_account_vendor(self, self.get_account_id)
-        if (vendor = 'Vietcombank')
+        if (vendor == 'Vietcombank')
             sql = "SELECT * FROM `transaction` where ((`trading_date`=%s and `balance`=%s and `description`=%s)) and `account_id`=%s"
         else
             sql = "SELECT * FROM `transaction` where ((`reference_number`=%s) and (`trading_date`=%s and `balance`=%s and `description`=%s)) and `account_id`=%s"
