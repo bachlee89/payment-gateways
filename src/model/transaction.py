@@ -57,9 +57,10 @@ class Transaction:
         vendor = self.get_account_vendor(self, self.get_account_id)
         if (vendor == 'Vietcombank'):
             sql = "SELECT * FROM `transaction` where ((`trading_date`=%s and `balance`=%s and `description`=%s)) and `account_id`=%s"
+            transaction = connection.select(sql, (self.get_trading_date(), self.get_balance(), self.get_description(), self.get_account_id()))
         else:
             sql = "SELECT * FROM `transaction` where ((`reference_number`=%s) and (`trading_date`=%s and `balance`=%s and `description`=%s)) and `account_id`=%s"
-        transaction = connection.select(sql, (self.get_reference_number(), self.get_trading_date(), self.get_balance(), self.get_description(), self.get_account_id()))
+            transaction = connection.select(sql, (self.get_reference_number(), self.get_trading_date(), self.get_balance(), self.get_description(), self.get_account_id()))
         if not transaction:
             codes = self.user.get_codes()
             user_code = None
