@@ -55,7 +55,7 @@ class Transaction:
     def save(self):
         connection = self.connection
         sql_vendor = "SELECT `vendor` FROM `account` where `id`=%s"
-        acc_vendor = connection.select(sql_vendor, self.get_account_id)
+        acc_vendor = connection.select(sql_vendor, self.get_account_id())
         if (acc_vendor[0] == 'Vietcombank'):
             sql = "SELECT * FROM `transaction` where `trading_date`=%s and `balance`=%s and `description`=%s and `account_id`=%s"
             transaction = connection.select(sql, (self.get_trading_date(), self.get_balance(), self.get_description(), self.get_account_id()))
