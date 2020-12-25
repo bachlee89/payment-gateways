@@ -54,7 +54,11 @@ class Transaction:
 
     def save(self):
         connection = self.connection
-        sql = "SELECT * FROM `transaction` where ((`reference_number`=%s) and (`trading_date`=%s and `balance`=%s and `description`=%s)) and `account_id`=%s"
+        vendor = self.get_account_vendor(self, self.get_account_id)
+        if (vendor = 'Vietcombank')
+            sql = "SELECT * FROM `transaction` where ((`trading_date`=%s and `balance`=%s and `description`=%s)) and `account_id`=%s"
+        else
+            sql = "SELECT * FROM `transaction` where ((`reference_number`=%s) and (`trading_date`=%s and `balance`=%s and `description`=%s)) and `account_id`=%s"
         transaction = connection.select(sql, (self.get_reference_number(), self.get_trading_date(), self.get_balance(), self.get_description(), self.get_account_id()))
         if not transaction:
             codes = self.user.get_codes()
@@ -103,3 +107,9 @@ class Transaction:
         sql = "SELECT `status` FROM `transaction` where `reference_number`=%s"
         transaction = connection.select(sql, reference_number)
         return transaction[0]
+
+    def get_account_vendor(self, account_id):
+            connection = self.connection
+            sql = "SELECT `vendor` FROM `account` where `number`=%s"
+            vendor = connection.select(sql, account_id)
+            return vendor[0]
