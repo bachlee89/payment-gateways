@@ -83,7 +83,7 @@ class VietcombankEnterprise:
                         "//tbody[@id='dstkdd-tbody']/tr/td")
                     account_name = self.payment.get_username()
                     account_number = account_info[0].text.strip()
-                    account_balance = float(account_info[2].text.strip().replace(' VND', '').replace(',', ''))
+                    account_balance = float(account_info[3].text.strip().replace(' VND', '').replace(',', ''))
                     account = self.update_account(account_name, account_number, account_balance, self.payment.get_id())
                     WebDriverWait(driver, 10).until(
                         EC.presence_of_element_located(
