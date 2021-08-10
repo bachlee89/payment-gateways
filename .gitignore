@@ -72,3 +72,11 @@ src/etc/config.ini
 env/
 venv/
 .idea/
+src/tmp/*
+src/model/__pycache__/*
+src/api/__pycache__/*
+src/connector/__pycache__/*
+src/converter/__pycache__/*
+src/db/__pycache__/*
+src/helper/__pycache__/*
+src/model/__pycache__/*
