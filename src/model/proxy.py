@@ -20,7 +20,7 @@ class Proxy:
                 proxies_doc = urlopen(proxies_req).read().decode('utf8')
 
                 soup = BeautifulSoup(proxies_doc, 'html.parser')
-                proxies_table = soup.find(id='proxylisttable')
+                proxies_table = soup.find(class='table table-striped table-bordered')
 
                 # Save proxies in the array
                 for row in proxies_table.tbody.find_all('tr'):

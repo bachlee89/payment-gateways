@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="82e68ea3-69c9-41f1-bfed-0bd0fc7ec94e" name="Default" comment="Fix docker-compose">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/connector/http/vietcombank_enterprise.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/connector/http/vietcombank_enterprise.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/proxy.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/proxy.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -141,7 +140,9 @@
       <updated>1525839621996</updated>
       <workItem from="1607501644500" duration="11616000" />
       <workItem from="1608965040306" duration="598000" />
-      <workItem from="1628571184355" duration="595000" />
+      <workItem from="1628571184355" duration="1320000" />
+      <workItem from="1628585244624" duration="1546000" />
+      <workItem from="1629271995811" duration="1435000" />
     </task>
     <task id="LOCAL-00059" summary="Msb do not need to use proxy">
       <created>1547520603828</created>
